@@ -1,0 +1,65 @@
+from typing import Literal, Any
+from pydantic import BaseModel
+
+
+class Knob(BaseModel):
+    name: str
+    label: str
+    type: Literal["slider", "toggle", "select"]
+    default: Any
+    min: float | None = None
+    max: float | None = None
+    step: float | None = None
+    options: list[str] | None = None
+    help: str = ""
+
+
+class Figure(BaseModel):
+    kind: Literal["figure"] = "figure"
+    png_base64: str
+    caption: str = ""
+
+
+class Metric(BaseModel):
+    label: str
+    value: float
+    display: str
+
+
+class RunResult(BaseModel):
+    figure: Figure
+    metrics: list[Metric]
+    narrative: str
+
+
+class AttackDescription(BaseModel):
+    id: str
+    name: str
+    group: str
+    summary: str
+    formula: str
+    threat_model: str
+    knobs: list[Knob]
+    has_defense: bool = True
+
+
+def validate_params(knobs: list[Knob], params: dict) -> dict:
+    clean: dict[str, Any] = {}
+    for knob in knobs:
+        raw = params.get(knob.name, knob.default)
+        if knob.type == "slider":
+            val = float(raw)
+            if knob.min is not None and val < knob.min:
+                raise ValueError(f"{knob.name}={val} below min {knob.min}")
+            if knob.max is not None and val > knob.max:
+                raise ValueError(f"{knob.name}={val} above max {knob.max}")
+        elif knob.type == "toggle":
+            val = bool(raw)
+        elif knob.type == "select":
+            val = str(raw)
+            if knob.options and val not in knob.options:
+                raise ValueError(f"{knob.name}={val!r} not in {knob.options}")
+        else:  # pragma: no cover - guarded by Literal
+            raise ValueError(f"unknown knob type {knob.type}")
+        clean[knob.name] = val
+    return clean

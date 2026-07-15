@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAttack, type AttackDescription, type Params } from "../api";
+import { API_BASE, getAttack, type AttackDescription, type Params } from "../api";
 import { useRun } from "../hooks/useRun";
 import { LessonPanel } from "./LessonPanel";
 import { ControlPanel } from "./ControlPanel";
@@ -38,7 +38,7 @@ export function AttackView({ attackId }: { attackId: string }) {
   }, [attackId, reset]);
 
   if (descError) {
-    return <div className="rounded bg-red-50 p-4 text-red-700" role="alert">{descError} — is the backend running on :8000?</div>;
+    return <div className="rounded bg-red-50 p-4 text-red-700" role="alert">{descError} — is the backend running at {API_BASE}?</div>;
   }
   if (!description) {
     return <div className="p-8 text-slate-400">Loading…</div>;

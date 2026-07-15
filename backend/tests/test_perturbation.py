@@ -28,3 +28,13 @@ def test_defend_uses_robust_model():
     r = PerturbationAttack().defend({"sample_index": 0, "epsilon": 0.25, "mode": "fgsm"})
     assert r.figure.png_base64
     assert r.narrative
+
+
+def test_pgd_mode_runs_and_perturbs():
+    # exercises the iterated PGD path (not just FGSM) through the module
+    r = PerturbationAttack().run(
+        {"sample_index": 0, "epsilon": 0.2, "mode": "pgd", "pgd_steps": 10}
+    )
+    assert r.figure.png_base64
+    assert "PGD" in r.narrative
+    assert _metric(r, "Adversarial confidence") <= _metric(r, "Clean confidence")

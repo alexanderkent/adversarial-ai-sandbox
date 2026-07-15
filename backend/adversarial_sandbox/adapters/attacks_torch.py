@@ -46,7 +46,7 @@ def cw_l2_targeted(model, x, target, steps=100, confidence=0.0, c=1.0, lr=0.01):
 
     onehot = F.one_hot(target, n_classes).bool()
     best_adv = x.clone().detach()
-    best_l2 = torch.full((x.shape[0],), float("inf"))
+    best_l2 = torch.full((x.shape[0],), float("inf"), device=x.device)
     final_adv = x.clone().detach()
 
     for _ in range(steps):
@@ -63,7 +63,9 @@ def cw_l2_targeted(model, x, target, steps=100, confidence=0.0, c=1.0, lr=0.01):
 
         with torch.no_grad():
             final_adv = x_adv.detach()
-            reached = model(final_adv).argmax(dim=1) == target
+            # reuse the logits already computed for this x_adv (the model is in
+            # eval mode with no stochastic layers, so a second forward is redundant).
+            reached = logits.detach().argmax(dim=1) == target
             improved = reached & (l2.detach() < best_l2)
             for i in range(x.shape[0]):
                 if improved[i]:

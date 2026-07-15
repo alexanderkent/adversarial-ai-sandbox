@@ -8,7 +8,11 @@ MODULES = list_attacks()
 
 
 def _needs_checkpoints(module) -> bool:
-    return module.group == "Perturbation" and not mnist.STANDARD_PATH.exists()
+    if module.group == "Perturbation":
+        return not mnist.STANDARD_PATH.exists()
+    if module.group == "Backdoor":
+        return not mnist.BACKDOOR_PATH.exists()
+    return False
 
 
 @pytest.mark.parametrize("module", MODULES, ids=[m.id for m in MODULES])

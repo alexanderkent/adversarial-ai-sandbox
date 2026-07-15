@@ -29,6 +29,7 @@ uvicorn adversarial_sandbox.api:app --reload --port 8000
 - `poisoning` — data poisoning (label flip + poison blob) with label-cleaning defense (sklearn, 2D).
 - `perturbation` — FGSM / PGD evasion with adversarial-training defense (PyTorch, MNIST).
 - `carlini_wagner` — targeted Carlini & Wagner L2 with adversarial-training defense (PyTorch, MNIST).
+- `backdoor` — BadNets trigger backdoor (planted in training) with a fine-pruning defense (PyTorch, MNIST).
 
 ## Adding an attack
 Drop a file in `adversarial_sandbox/attacks/`, subclass `AttackModule`, decorate

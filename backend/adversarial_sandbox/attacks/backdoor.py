@@ -3,6 +3,7 @@ from ..registry import register_attack
 from ..base import AttackModule
 from ..schema import Knob, AttackDescription, RunResult, Figure, Metric
 from ..adapters import mnist
+from ..source import snippet
 
 
 def _clean_accuracy(model, xs, ys):
@@ -34,11 +35,14 @@ class BackdoorAttack(AttackModule):
                 "model behaves normally on clean inputs but classifies **any** triggered "
                 f"image as the target ({mnist.BACKDOOR_TARGET}) — stealthy and hard to detect."
             ),
-            formula="Train on data plus {(x + trigger, target)} for a poisoned subset; "
-                    "at test time model(x + trigger) = target.",
+            formula=r"\text{train on } \mathcal{D} \cup \{(x + \tau,\ t)\}; \quad f(x + \tau) = t",
             threat_model="Attacker controls part of the training data (outsourced or "
                          "supply-chain training) and implants a trigger->target rule; "
                          "clean accuracy stays high so the backdoor is hard to notice.",
+            code=[
+                snippet(mnist.apply_trigger, "Applying the trigger"),
+                snippet(mnist.fine_prune, "Fine-pruning (defense)"),
+            ],
             knobs=[
                 Knob(name="sample_index", label="Digit sample", type="slider",
                      min=0, max=9, step=1, default=1,

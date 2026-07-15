@@ -26,6 +26,13 @@ export interface AttackDescription extends AttackSummary {
   threat_model: string;
   knobs: Knob[];
   has_defense: boolean;
+  code?: CodeSnippet[];
+}
+
+export interface CodeSnippet {
+  label: string;
+  language: string;
+  source: string;
 }
 
 export interface Figure {

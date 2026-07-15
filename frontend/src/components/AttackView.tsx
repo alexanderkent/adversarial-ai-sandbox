@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { API_BASE, getAttack, type AttackDescription, type Params } from "../api";
 import { useRun } from "../hooks/useRun";
 import { LessonPanel } from "./LessonPanel";
+import { CodePanel } from "./CodePanel";
 import { ControlPanel } from "./ControlPanel";
 import { ArtifactPanel } from "./ArtifactPanel";
 
@@ -10,6 +11,7 @@ export function AttackView({ attackId }: { attackId: string }) {
   const [params, setParams] = useState<Params>({});
   const [defenseOn, setDefenseOn] = useState(false);
   const [descError, setDescError] = useState<string | null>(null);
+  const [tab, setTab] = useState<"lesson" | "code">("lesson");
   const { result, loading, error, execute, reset } = useRun(attackId);
 
   useEffect(() => {
@@ -47,7 +49,30 @@ export function AttackView({ attackId }: { attackId: string }) {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
       <div className="flex flex-col gap-6">
-        <LessonPanel description={description} />
+        <div>
+          <div role="tablist" className="mb-3 flex gap-2 border-b border-slate-200">
+            {(["lesson", "code"] as const).map((t) => (
+              <button
+                key={t}
+                role="tab"
+                aria-selected={tab === t}
+                onClick={() => setTab(t)}
+                className={`-mb-px border-b-2 px-3 py-1.5 text-sm font-medium ${
+                  tab === t
+                    ? "border-indigo-600 text-indigo-700"
+                    : "border-transparent text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                {t === "lesson" ? "Lesson" : "Code"}
+              </button>
+            ))}
+          </div>
+          {tab === "lesson" ? (
+            <LessonPanel description={description} />
+          ) : (
+            <CodePanel code={description.code ?? []} />
+          )}
+        </div>
         <ControlPanel
           description={description}
           params={params}

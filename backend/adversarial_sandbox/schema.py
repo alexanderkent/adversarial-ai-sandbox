@@ -20,6 +20,12 @@ class Figure(BaseModel):
     caption: str = ""
 
 
+class CodeSnippet(BaseModel):
+    label: str
+    language: str = "python"
+    source: str
+
+
 class Metric(BaseModel):
     label: str
     value: float
@@ -41,6 +47,7 @@ class AttackDescription(BaseModel):
     threat_model: str
     knobs: list[Knob]
     has_defense: bool = True
+    code: list[CodeSnippet] = []
 
 
 def validate_params(knobs: list[Knob], params: dict) -> dict:

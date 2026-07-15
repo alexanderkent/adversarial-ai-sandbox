@@ -4,6 +4,7 @@ from ..registry import register_attack
 from ..base import AttackModule
 from ..schema import Knob, AttackDescription, RunResult, Figure, Metric
 from ..adapters import sklearn2d as s2d
+from ..source import snippet
 
 
 # A label-noise-SENSITIVE classifier: high C (near hard margin) forces the
@@ -56,10 +57,13 @@ class PoisoningAttack(AttackModule):
                 "inside the opposite class, then watch a sensitive (high-C) "
                 "boundary contort around it."
             ),
-            formula="Flip: y_i -> 1 - y_i for a random subset. Inject: a cluster of "
-                    "n_poison points near the opposite class's centroid, mislabeled.",
+            formula=r"\text{flip: } y_i \to 1 - y_i \qquad \text{inject: } (x_{\text{blob}},\ t)",
             threat_model="Attacker can modify training labels/data (supply-chain or "
                          "annotation poisoning). No access to the model at test time.",
+            code=[
+                snippet(self._poison, "Injecting the poison"),
+                snippet(_super_majority_clean, "Super-majority cleaning (defense)"),
+            ],
             knobs=[
                 Knob(name="dataset", label="Dataset", type="select",
                      options=["moons", "blobs"], default="blobs",

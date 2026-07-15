@@ -5,6 +5,7 @@ from ..base import AttackModule
 from ..schema import Knob, AttackDescription, RunResult, Figure, Metric
 from ..adapters import mnist
 from ..adapters.attacks_torch import cw_l2_targeted
+from ..source import snippet
 
 
 def _target_conf(model, x, target_label):
@@ -29,10 +30,10 @@ class CarliniWagnerAttack(AttackModule):
                 "hard-to-detect perturbations. (This demo fixes the trade-off constant "
                 "and iteration count for interactivity.)"
             ),
-            formula="minimize ||x_adv - x||_2^2 + c * f(x_adv),  "
-                    "f = max(max_{i != t} Z(x_adv)_i - Z(x_adv)_t, -kappa)",
+            formula=r"\min_{\delta}\ \lVert x_{adv} - x \rVert_2^2 + c\,f(x_{adv}), \quad f = \max\!\big(\max_{i \neq t} Z_i - Z_t,\ -\kappa\big)",
             threat_model="White-box attacker optimizing an input to be classified as a "
                          "chosen target class while minimizing the L2 perturbation.",
+            code=[snippet(cw_l2_targeted, "Carlini-Wagner L2")],
             knobs=[
                 Knob(name="sample_index", label="Digit sample", type="slider",
                      min=0, max=9, step=1, default=0, help="Which held-out digit to perturb."),

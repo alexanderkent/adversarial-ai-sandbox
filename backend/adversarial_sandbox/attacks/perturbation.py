@@ -5,6 +5,7 @@ from ..base import AttackModule
 from ..schema import Knob, AttackDescription, RunResult, Figure, Metric
 from ..adapters import mnist
 from ..adapters.attacks_torch import fgsm, pgd
+from ..source import snippet
 
 
 def _true_class_conf(model, x, true_label):
@@ -27,9 +28,10 @@ class PerturbationAttack(AttackModule):
                 "**input** so a trained model misclassifies it. FGSM takes one step "
                 "along the sign of the loss gradient; PGD iterates."
             ),
-            formula="FGSM: x_adv = x + eps * sign(grad_x L(model(x), y)).",
+            formula=r"x_{adv} = x + \epsilon\,\operatorname{sign}\!\big(\nabla_x\, \mathcal{L}(f(x), y)\big)",
             threat_model="Attacker has white-box access to gradients and can perturb "
                          "the test input within an L-inf budget epsilon.",
+            code=[snippet(fgsm, "FGSM"), snippet(pgd, "PGD (iterated)")],
             knobs=[
                 Knob(name="sample_index", label="Digit sample", type="slider",
                      min=0, max=9, step=1, default=0, help="Which held-out digit."),

@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { listAttacks, runAttack, ApiError } from "./api";
+import { listAttacks, runAttack } from "./api";
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -22,16 +22,19 @@ test("listAttacks returns parsed array", async () => {
 });
 
 test("runAttack posts params and returns result", async () => {
-  const spy = vi.fn(async () => ({
-    ok: true, status: 200, statusText: "",
-    json: async () => ({ figure: { kind: "figure", png_base64: "abc", caption: "" }, metrics: [], narrative: "n" }),
-  }));
+  const spy = vi.fn(
+    (_url: RequestInfo | URL, _init?: RequestInit): Promise<Response> =>
+      Promise.resolve({
+        ok: true, status: 200, statusText: "",
+        json: async () => ({ figure: { kind: "figure", png_base64: "abc", caption: "" }, metrics: [], narrative: "n" }),
+      } as unknown as Response),
+  );
   vi.stubGlobal("fetch", spy);
   const res = await runAttack("poisoning", { flip_pct: 20 });
   expect(res.figure.png_base64).toBe("abc");
   const [url, init] = spy.mock.calls[0];
   expect(String(url)).toContain("/attacks/poisoning/run");
-  expect(JSON.parse((init as RequestInit).body as string)).toEqual({ flip_pct: 20 });
+  expect(JSON.parse(init!.body as string)).toEqual({ flip_pct: 20 });
 });
 
 test("non-2xx throws ApiError with detail", async () => {

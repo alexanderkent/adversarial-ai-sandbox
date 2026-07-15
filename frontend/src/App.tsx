@@ -33,7 +33,7 @@ export default function App() {
             <AttackSidebar attacks={attacks} selectedId={selectedId} onSelect={setSelectedId} />
           )}
         </aside>
-        <main>{selectedId && <AttackView attackId={selectedId} />}</main>
+        <main>{selectedId && <AttackView key={selectedId} attackId={selectedId} />}</main>
       </div>
     </div>
   );

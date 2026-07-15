@@ -12,12 +12,16 @@ def make_dataset(kind: str, n_samples: int = 200, noise: float = 0.2, seed: int 
     if kind == "moons":
         return make_moons(n_samples=n_samples, noise=noise, random_state=seed)
     if kind == "blobs":
-        return make_blobs(n_samples=n_samples, centers=2, cluster_std=1.5, random_state=seed)
+        # Fixed, well-separated centers (not random) so class separation is
+        # deterministic across seeds — the defense's recovery must not hinge
+        # on a lucky random layout.
+        return make_blobs(n_samples=n_samples, centers=[[-2.5, -2.5], [2.5, 2.5]],
+                          cluster_std=1.8, random_state=seed)
     raise ValueError(f"unknown dataset {kind!r}")
 
 
-def train(X, y):
-    clf = SVC(kernel="rbf", gamma="scale", C=1.0)
+def train(X, y, C: float = 1.0):
+    clf = SVC(kernel="rbf", gamma="scale", C=C)
     clf.fit(X, y)
     return clf
 

@@ -59,13 +59,13 @@ class PerturbationAttack(AttackModule):
         true_label = int(y.item())
 
         x_adv = self._attack(model, x, y, p)
-        clean_label, _ = mnist.predict(model, x)
-        adv_label, _ = mnist.predict(model, x_adv)
+        clean_label, clean_pred_conf = mnist.predict(model, x)
+        adv_label, adv_pred_conf = mnist.predict(model, x_adv)
         clean_conf = _true_class_conf(model, x, true_label)
         adv_conf = _true_class_conf(model, x_adv, true_label)
 
         fig = mnist.render_attack_figure(
-            x, x_adv, (clean_label, clean_conf), (adv_label, adv_conf),
+            x, x_adv, (clean_label, clean_pred_conf), (adv_label, adv_pred_conf),
             p["mode"].upper(),
         )
         return true_label, clean_label, adv_label, clean_conf, adv_conf, fig, panel_title

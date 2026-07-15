@@ -35,3 +35,9 @@ test("defense toggle routes Run to defendAttack", async () => {
   fireEvent.click(screen.getByRole("button", { name: /run with defense/i }));
   await waitFor(() => expect(defSpy).toHaveBeenCalledWith("poisoning", { flip_pct: 20 }));
 });
+
+test("shows an error when the description fetch fails", async () => {
+  vi.spyOn(api, "getAttack").mockRejectedValue(new api.ApiError(404, "Unknown attack"));
+  render(<AttackView attackId="nope" />);
+  await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Unknown attack"));
+});

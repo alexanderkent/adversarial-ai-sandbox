@@ -9,6 +9,7 @@ export function AttackView({ attackId }: { attackId: string }) {
   const [description, setDescription] = useState<AttackDescription | null>(null);
   const [params, setParams] = useState<Params>({});
   const [defenseOn, setDefenseOn] = useState(false);
+  const [descError, setDescError] = useState<string | null>(null);
   const { result, loading, error, execute, reset } = useRun(attackId);
 
   useEffect(() => {
@@ -16,20 +17,29 @@ export function AttackView({ attackId }: { attackId: string }) {
     setDescription(null);
     reset();
     setDefenseOn(false);
-    getAttack(attackId).then((d) => {
-      if (!active) return;
-      setDescription(d);
-      const seeded: Params = {};
-      d.knobs.forEach((k) => {
-        seeded[k.name] = k.default;
+    setDescError(null);
+    getAttack(attackId)
+      .then((d) => {
+        if (!active) return;
+        setDescription(d);
+        const seeded: Params = {};
+        d.knobs.forEach((k) => {
+          seeded[k.name] = k.default;
+        });
+        setParams(seeded);
+      })
+      .catch((e) => {
+        if (!active) return;
+        setDescError(e instanceof Error ? e.message : "Failed to load attack");
       });
-      setParams(seeded);
-    });
     return () => {
       active = false;
     };
   }, [attackId, reset]);
 
+  if (descError) {
+    return <div className="rounded bg-red-50 p-4 text-red-700" role="alert">{descError} — is the backend running on :8000?</div>;
+  }
   if (!description) {
     return <div className="p-8 text-slate-400">Loading…</div>;
   }

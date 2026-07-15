@@ -22,6 +22,7 @@ Three attack families, spanning the two "worlds" of the course:
 | Data Poisoning | scikit-learn, 2D | label flip + concentrated poison blob | super-majority label cleaning | M2 Poisoning |
 | Perturbation | PyTorch, MNIST | FGSM / PGD (evasion) | adversarial training | M3 Perturbations / M5 Evasion |
 | Carlini & Wagner | PyTorch, MNIST | targeted C&W-L2 (optimization) | adversarial training | M3 / M6 defenses |
+| Backdoor | PyTorch, MNIST | BadNets trigger (planted in training) | fine-pruning | M4 Backdoors / M6 defenses |
 
 ## 2. Architecture (and why)
 
@@ -35,13 +36,15 @@ Three attack families, spanning the two "worlds" of the course:
   returns; the sidebar and artifact panel are attack-agnostic.
 
 **The payoff — extensibility:** adding a new attack is *one backend module file + one
-import line*. Nothing else changes. This was validated twice: the perturbation and,
-later, the **Carlini & Wagner** module each appeared in the UI — new sidebar entry, new
-`target` select knob, new lesson, rendered artifact — with **zero frontend changes** and
-**zero contract-test edits** (a parametrized test auto-covers every registered module).
-For a course that will add attacks in future iterations, this is the central design win.
+import line*. Nothing else changes. This was validated three times: the perturbation,
+the **Carlini & Wagner**, and the **Backdoor** module each appeared in the UI — new
+sidebar entry (a whole new *group* for the backdoor), new knobs (a `target` select, a
+`prune_fraction` slider), new lesson, rendered artifact — with **zero frontend changes**
+and **zero contract-test edits** (a parametrized test auto-covers every registered
+module). For a course that will add attacks in future iterations, this is the central
+design win.
 
-## 3. The three attacks in one paragraph each
+## 3. The four attacks in one paragraph each
 
 **Data poisoning.** On a 2D toy dataset, flip a fraction of training labels and inject a
 tight cluster of mislabeled points ("poison blob") deep inside the opposite class, then
@@ -100,14 +103,29 @@ On MNIST, C&W needed a larger Adam learning rate to reach the target within an
 interactive iteration budget (~100 steps) rather than ~400 at a textbook-small rate.
 A practical note on deploying optimization-based attacks in a responsive tool.
 
+### 4.4 The backdoor resists removal — fine-pruning mitigates, it doesn't erase
+The BadNets backdoor is *sticky*. Fine-pruning as usually stated — zero the channels
+dormant on clean data — did **nothing** here (ASR stayed ~100% at 50% pruning): the
+SmallCNN is over-parameterized for MNIST, so pruning half its channels doesn't dent
+clean accuracy, and the backdoor isn't confined to dormant channels. Adding the
+literature's fine-tune step (the real "Fine-Pruning") *only* worked once it fine-tuned on
+a **larger, non-memorized** clean set — on the tiny held-out set the model already fit at
+~zero loss, so there was no gradient to move the weights. Even then the result is honest
+**mitigation, not elimination**: at 70% pruning ASR falls ~100%→~60% with clean accuracy
+held, and the `prune_fraction` knob is the accuracy-vs-ASR trade-off dial. *Analysis
+hook:* a strong, concrete Module-6 lesson — a textbook defense can fail outright for
+mundane reasons (model capacity, fine-tune data), and even when it works it may only
+blunt the attack rather than remove it.
+
 ## 5. Verification
 
-- Backend: 42 automated tests (pytest), including per-attack tests that assert the
-  attack measurably degrades the model and the defense measurably recovers/resists, plus
-  a parametrized contract test over every registered module.
+- Backend: 53 automated tests (pytest), including per-attack tests that assert the
+  attack measurably degrades the model and the defense measurably recovers/resists/
+  mitigates, plus a parametrized contract test over every registered module.
 - Frontend: 24 component tests (Vitest + React Testing Library); clean TypeScript build.
-- End-to-end: all three attacks were driven live in a browser against the running
-  backend (poisoning boundary shift, FGSM confidence drop, C&W 7→8 targeted flip).
+- End-to-end: all four attacks were driven live in a browser against the running backend
+  (poisoning boundary shift, FGSM confidence drop, C&W 7→8 targeted flip, backdoor 2→0
+  trigger flip and its fine-pruning mitigation).
 
 ## 6. Limitations & future work
 
@@ -115,8 +133,11 @@ A practical note on deploying optimization-based attacks in a responsive tool.
   trade-off). A "thorough mode" could restore both.
 - **Poisoning** lives on 2D toy data by design (for visual clarity); the findings about
   defense fragility should be re-checked on higher-dimensional/tabular data.
-- **Substrate coverage**: backdoor attacks (M4) and additional defenses (gradient
-  masking, defensive distillation, M6) are natural next modules — each is one new file.
+- **Backdoor** uses a fixed trigger/target and an over-parameterized model that makes
+  the backdoor hard to prune out; a stronger defense (Neural Cleanse, STRIP detection) or
+  a less over-parameterized model would sharpen the defense story.
+- **Substrate coverage**: additional defenses (gradient masking, defensive distillation,
+  M6) and other attacks are natural next modules — each is one new file.
 - **Portability**: the code targets CPU; a couple of tensors would need device-awareness
   for GPU.
 - **Not evaluated**: transferability across models, adaptive attacks against the

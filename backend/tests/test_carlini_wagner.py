@@ -27,6 +27,9 @@ def test_targeted_attack_raises_target_confidence():
     adv = _metric(r, "Target-class confidence (adversarial)")
     clean = _metric(r, "Target-class confidence (clean)")
     assert adv > clean
+    # With lr=0.1 the attack reliably reaches the target on the undefended model:
+    # the narrative only says "driven to predict the target 8" when adv_label == target.
+    assert "driven to predict the target 8" in r.narrative
 
 
 def test_defend_runs_on_robust_model():

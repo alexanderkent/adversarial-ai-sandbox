@@ -59,7 +59,7 @@ class CarliniWagnerAttack(AttackModule):
 
         x_adv = cw_l2_targeted(
             model, x, torch.tensor([target]),
-            steps=int(p["steps"]), confidence=float(p["confidence"]),
+            steps=int(p["steps"]), confidence=float(p["confidence"]), lr=0.1,
         )
         clean_label, clean_pconf = mnist.predict(model, x)
         adv_label, adv_pconf = mnist.predict(model, x_adv)

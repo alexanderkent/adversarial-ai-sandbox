@@ -13,7 +13,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from adversarial_sandbox.adapters.mnist import (
     SmallCNN, MODELS_DIR, STANDARD_PATH, ROBUST_PATH, SAMPLES_PATH,
-    BACKDOOR_PATH, EVAL_PATH, BACKDOOR_TARGET, apply_trigger,
+    BACKDOOR_PATH, EVAL_PATH, FINETUNE_PATH, BACKDOOR_TARGET, apply_trigger,
 )
 from adversarial_sandbox.adapters.attacks_torch import fgsm
 
@@ -71,9 +71,16 @@ def main(mode: str = "all"):
     # Backdoor artifacts (added for the Backdoor module); safe to run alone via
     #   python scripts/train_mnist.py backdoor
     torch.save(_train_backdoored().state_dict(), BACKDOOR_PATH)
+    # gather enough clean test data for a disjoint eval + fine-tune split
     _, test_loader = _loaders()
-    x, y = next(iter(test_loader))
-    torch.save({"x": x[:500], "y": y[:500]}, EVAL_PATH)
+    xs, ys = [], []
+    for bx, by in test_loader:
+        xs.append(bx); ys.append(by)
+        if sum(t.shape[0] for t in xs) >= 5256:
+            break
+    xs = torch.cat(xs)[:5256]; ys = torch.cat(ys)[:5256]
+    torch.save({"x": xs[:256], "y": ys[:256]}, EVAL_PATH)
+    torch.save({"x": xs[256:5256], "y": ys[256:5256]}, FINETUNE_PATH)
     print(f"Saved checkpoints to {MODELS_DIR} (mode={mode})")
 
 

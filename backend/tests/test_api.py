@@ -27,3 +27,20 @@ def test_run_poisoning_returns_figure():
 def test_invalid_params_is_422():
     r = client.post("/attacks/poisoning/run", json={"flip_pct": 999})
     assert r.status_code == 422
+
+
+def test_run_unknown_attack_is_404():
+    r = client.post("/attacks/nope/run", json={})
+    assert r.status_code == 404
+
+
+def test_missing_checkpoint_is_503(monkeypatch):
+    # a module whose checkpoint is missing surfaces as 503, not a 500 crash
+    from adversarial_sandbox.adapters import mnist
+
+    monkeypatch.setattr(mnist, "STANDARD_PATH", mnist.MODELS_DIR / "does_not_exist.pt")
+    r = client.post(
+        "/attacks/perturbation/run",
+        json={"sample_index": 0, "epsilon": 0.1, "mode": "fgsm"},
+    )
+    assert r.status_code == 503

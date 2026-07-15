@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { listAttacks, type AttackSummary } from "./api";
+import { API_BASE, listAttacks, type AttackSummary } from "./api";
 import { AttackSidebar } from "./components/AttackSidebar";
 import { AttackView } from "./components/AttackView";
 
@@ -27,7 +27,7 @@ export default function App() {
         <aside>
           {error ? (
             <div className="rounded bg-red-50 p-3 text-sm text-red-700" role="alert">
-              {error} — is the backend running on :8000?
+              {error} — is the backend running at {API_BASE}?
             </div>
           ) : (
             <AttackSidebar attacks={attacks} selectedId={selectedId} onSelect={setSelectedId} />

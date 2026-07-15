@@ -1,4 +1,4 @@
-const BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
+export const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
 
 export type KnobType = "slider" | "toggle" | "select";
 
@@ -72,7 +72,7 @@ async function toJson<T>(res: Response): Promise<T> {
 }
 
 function post(path: string, params: Params): Promise<Response> {
-  return fetch(`${BASE}${path}`, {
+  return fetch(`${API_BASE}${path}`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(params),
@@ -80,11 +80,11 @@ function post(path: string, params: Params): Promise<Response> {
 }
 
 export async function listAttacks(): Promise<AttackSummary[]> {
-  return toJson(await fetch(`${BASE}/attacks`));
+  return toJson(await fetch(`${API_BASE}/attacks`));
 }
 
 export async function getAttack(id: string): Promise<AttackDescription> {
-  return toJson(await fetch(`${BASE}/attacks/${id}`));
+  return toJson(await fetch(`${API_BASE}/attacks/${id}`));
 }
 
 export async function runAttack(id: string, params: Params): Promise<RunResult> {

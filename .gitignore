@@ -3,5 +3,6 @@ __pycache__/
 .venv/
 backend/*.egg-info/
 backend/models/*.pt
+backend/_data/
 node_modules/
 dist/

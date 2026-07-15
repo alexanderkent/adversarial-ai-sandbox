@@ -9,6 +9,7 @@ const desc: api.AttackDescription = {
   id: "poisoning", name: "Data Poisoning", group: "Poisoning", summary: "s",
   formula: "f", threat_model: "t", has_defense: true,
   knobs: [{ name: "flip_pct", label: "Flip %", type: "slider", min: 0, max: 50, step: 1, default: 20 }],
+  code: [{ label: "FGSM", language: "python", source: "def fgsm():\n    pass" }],
 };
 const result: api.RunResult = {
   figure: { kind: "figure", png_base64: "AAAA", caption: "" },
@@ -40,4 +41,12 @@ test("shows an error when the description fetch fails", async () => {
   vi.spyOn(api, "getAttack").mockRejectedValue(new api.ApiError(404, "Unknown attack"));
   render(<AttackView attackId="nope" />);
   await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Unknown attack"));
+});
+
+test("switches to the Code tab and shows the source", async () => {
+  vi.spyOn(api, "getAttack").mockResolvedValue(desc);
+  render(<AttackView attackId="poisoning" />);
+  await waitFor(() => screen.getByRole("heading", { name: "Data Poisoning" }));
+  fireEvent.click(screen.getByRole("tab", { name: "Code" }));
+  expect(screen.getByText("FGSM")).toBeInTheDocument();
 });

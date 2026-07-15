@@ -1,32 +1,25 @@
-# React + TypeScript + Vite
+# Adversarial Sandbox — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React + TypeScript + Vite + Tailwind SPA for the Adversarial Sandbox.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## Prereqs
+The backend must be running (see `../backend/README.md`):
+```bash
+cd ../backend && source .venv/bin/activate && uvicorn adversarial_sandbox.api:app --port 8000
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Setup & run
+```bash
+npm install
+npm run dev        # http://localhost:5173
+```
+The API base URL defaults to `http://localhost:8000`; override with `VITE_API_BASE`.
+
+## Test
+```bash
+npm test
+```
+
+## How it stays generic
+`ControlPanel`/`KnobControl` render whatever knobs the backend's `describe()` returns,
+so a new backend attack appears here with no frontend changes.

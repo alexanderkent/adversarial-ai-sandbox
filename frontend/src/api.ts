@@ -77,11 +77,30 @@ export interface Transcript {
   caption?: string;
 }
 
+export interface TextSpan {
+  text: string;
+  changed?: boolean;
+}
+
+export interface TextVariant {
+  label: string;
+  spans: TextSpan[];
+  score: number;
+  score_display: string;
+}
+
+export interface TextComparison {
+  kind: "text_comparison";
+  variants: TextVariant[];
+  caption?: string;
+}
+
 export interface RunResult {
   figure?: Figure | null;
   metrics: Metric[];
   narrative: string;
   transcript?: Transcript | null;
+  text_comparison?: TextComparison | null;
 }
 
 export type Params = Record<string, number | boolean | string>;

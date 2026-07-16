@@ -1,6 +1,7 @@
 import type { RunResult } from "../api";
 import { MetricBars } from "./MetricBars";
 import { TranscriptView } from "./TranscriptView";
+import { TextComparisonView } from "./TextComparisonView";
 
 interface Props {
   result: RunResult | null;
@@ -26,6 +27,8 @@ export function ArtifactPanel({ result, loading, error }: Props) {
     <div className="flex flex-col gap-4">
       {result.transcript ? (
         <TranscriptView transcript={result.transcript} />
+      ) : result.text_comparison ? (
+        <TextComparisonView comparison={result.text_comparison} />
       ) : result.figure ? (
         <figure className="m-0">
           <img

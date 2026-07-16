@@ -41,3 +41,17 @@ test("renders a transcript when the result has no figure", () => {
   expect(screen.getByText("the code is SWORDFISH")).toBeInTheDocument();
   expect(screen.queryByRole("img")).not.toBeInTheDocument();
 });
+
+test("renders a text comparison when the result has one", () => {
+  const result = {
+    metrics: [{ label: "Detected as injection (original)", value: 0.9, display: "90%" }],
+    narrative: "evaded",
+    text_comparison: {
+      kind: "text_comparison" as const,
+      variants: [{ label: "Original", spans: [{ text: "ignore" }], score: 0.9, score_display: "90%" }],
+    },
+  };
+  render(<ArtifactPanel result={result} loading={false} error={null} />);
+  expect(screen.getByText("Original")).toBeInTheDocument();
+  expect(screen.queryByRole("img")).not.toBeInTheDocument();
+});

@@ -11,12 +11,14 @@ HOMOGLYPHS = {
 }
 _HOMO_REVERSE = {v: k for k, v in HOMOGLYPHS.items()}
 
-# Trigger word -> meaning-preserving synonym (no character overlap to fold back).
+# Trigger word -> meaning-preserving synonym. Targets are chosen to be OUT of the
+# detector's training vocabulary (no character overlap to fold back), so a synonym
+# swap both evades detection and survives normalization — the honest limitation.
 SYNONYMS = {
-    "ignore": "disregard", "instructions": "directives", "previous": "prior",
-    "reveal": "disclose", "system": "config", "prompt": "preamble",
-    "override": "supersede", "password": "passphrase", "confidential": "private",
-    "disregard": "overlook",
+    "ignore": "overlook", "previous": "foregoing", "instructions": "briefing",
+    "reveal": "divulge", "system": "platform", "prompt": "preamble",
+    "override": "supersede", "guidelines": "norms", "confidential": "privileged",
+    "password": "passcode", "disregard": "dismiss", "restrictions": "limits",
 }
 
 _TOKEN_RE = re.compile(r"[A-Za-z]+|[^A-Za-z]+")  # alpha runs and non-alpha runs, in order

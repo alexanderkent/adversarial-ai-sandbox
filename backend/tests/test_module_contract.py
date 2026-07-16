@@ -12,6 +12,9 @@ def _needs_checkpoints(module) -> bool:
         return not mnist.STANDARD_PATH.exists()
     if module.group == "Backdoor":
         return not mnist.BACKDOOR_PATH.exists()
+    if module.group == "GenAI":
+        from adversarial_sandbox.adapters import genai
+        return not (genai.LLM_DIR / "config.json").exists()
     return False
 
 
@@ -31,6 +34,6 @@ def test_run_and_defend_contract(module):
     for method in ("run", "defend"):
         result = getattr(module, method)(defaults)
         assert isinstance(result, RunResult)
-        assert result.figure.png_base64
+        assert result.figure is not None or result.transcript is not None
         assert result.metrics
         assert result.narrative

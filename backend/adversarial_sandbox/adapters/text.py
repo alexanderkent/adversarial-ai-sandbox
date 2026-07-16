@@ -65,7 +65,11 @@ def perturb(text: str, technique: str, intensity: float) -> list[tuple[str, bool
 
 def normalize_text(text: str) -> str:
     """Fold away homoglyph / zero-width / spacing perturbations (a heuristic input
-    filter). Cannot undo synonym swaps — that is the honest limitation of the defense."""
+    filter). Cannot undo synonym swaps — that is the honest limitation of the defense.
+
+    The homoglyph fold and dot-collapse are heuristics that assume ASCII-intended input:
+    on genuinely non-ASCII text (e.g. real Cyrillic) they would over-normalize. That is
+    fine for this teaching module, whose inputs are the fixed ASCII PAYLOADS."""
     text = text.replace(ZWSP, "")
     text = "".join(_HOMO_REVERSE.get(c, c) for c in text)
     text = unicodedata.normalize("NFKC", text)

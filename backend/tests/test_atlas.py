@@ -1,5 +1,6 @@
 import re
 from adversarial_sandbox.atlas import technique, TACTICS, CONTEXT_TECHNIQUES
+from adversarial_sandbox.atlas import build_matrix
 from adversarial_sandbox import attacks  # noqa: F401  (register modules)
 from adversarial_sandbox.registry import list_attacks, get_attack
 
@@ -46,3 +47,22 @@ def test_prompt_injection_has_subtechniques():
     t = get_attack("prompt_injection").describe().atlas[0]
     sub = {s.id for s in t.subtechniques}
     assert sub == {"AML.T0051.000", "AML.T0051.001"}
+
+
+def test_build_matrix_orders_tactics_and_marks_coverage():
+    m = build_matrix(list_attacks())
+    assert [c.tactic for c in m.tactics] == TACTICS
+    by_id = {cell.id: cell for col in m.tactics for cell in col.cells}
+    # AML.T0015 covered by the three evasion-style attacks
+    evade = by_id["AML.T0015"]
+    assert evade.covered is True
+    assert {a.attack_id for a in evade.attacks} == {"perturbation", "carlini_wagner", "text_evasion"}
+    # context technique present and greyed
+    assert by_id["AML.T0040"].covered is False
+    assert by_id["AML.T0040"].attacks == []
+
+
+def test_build_matrix_covered_cells_precede_context():
+    m = build_matrix(list_attacks())
+    staging = next(c for c in m.tactics if c.tactic == "ML Attack Staging")
+    assert staging.cells[0].covered is True  # covered-first ordering

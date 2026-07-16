@@ -5,7 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from . import attacks  # noqa: F401  (import registers all modules)
 from .registry import list_attacks, get_attack
-from .schema import AttackDescription, RunResult
+from .schema import AttackDescription, RunResult, AtlasMatrix
+from .atlas import build_matrix
 
 app = FastAPI(title="Adversarial Sandbox API")
 app.add_middleware(
@@ -23,6 +24,11 @@ def list_all():
         d = m.describe()
         out.append({"id": d.id, "name": d.name, "group": d.group, "summary": d.summary})
     return out
+
+
+@app.get("/atlas", response_model=AtlasMatrix)
+def atlas_matrix():
+    return build_matrix(list_attacks())
 
 
 def _module_or_404(attack_id: str):

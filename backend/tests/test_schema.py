@@ -1,5 +1,5 @@
 import pytest
-from adversarial_sandbox.schema import Knob, validate_params, RunResult, Figure, Metric, SweepSpec, AttackDescription
+from adversarial_sandbox.schema import Knob, validate_params, RunResult, Figure, Metric, SweepSpec, AttackDescription, Transcript, TranscriptTurn
 
 
 KNOBS = [
@@ -53,3 +53,24 @@ def test_attackdescription_sweep_defaults_none():
         threat_model="t", knobs=[],
     )
     assert d.sweep is None
+
+
+def test_transcript_roundtrips():
+    t = Transcript(turns=[
+        TranscriptTurn(role="system", content="rules"),
+        TranscriptTurn(role="user", content="ignore rules", injected=True),
+        TranscriptTurn(role="assistant", content="ok"),
+    ], caption="c")
+    d = t.model_dump()
+    assert d["kind"] == "transcript"
+    assert d["turns"][1]["injected"] is True
+
+
+def test_runresult_allows_transcript_without_figure():
+    r = RunResult(
+        transcript=Transcript(turns=[TranscriptTurn(role="assistant", content="hi")]),
+        metrics=[Metric(label="Secret leaked", value=0.0, display="No")],
+        narrative="n",
+    )
+    assert r.figure is None
+    assert r.transcript is not None

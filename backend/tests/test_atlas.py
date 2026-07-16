@@ -6,7 +6,7 @@ from adversarial_sandbox.registry import list_attacks, get_attack
 
 
 def test_technique_builds_url_from_id():
-    t = technique("AML.T0015", "Evade ML Model", "Defense Evasion")
+    t = technique("AML.T0015", "Evade AI Model", "Defense Evasion")
     assert t.url == "https://atlas.mitre.org/techniques/AML.T0015"
     assert t.subtechniques == []
 
@@ -64,5 +64,5 @@ def test_build_matrix_orders_tactics_and_marks_coverage():
 
 def test_build_matrix_covered_cells_precede_context():
     m = build_matrix(list_attacks())
-    staging = next(c for c in m.tactics if c.tactic == "ML Attack Staging")
+    staging = next(c for c in m.tactics if c.tactic == "AI Attack Staging")
     assert staging.cells[0].covered is True  # covered-first ordering

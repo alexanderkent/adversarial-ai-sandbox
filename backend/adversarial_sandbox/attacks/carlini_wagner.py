@@ -58,8 +58,8 @@ class CarliniWagnerAttack(AttackModule):
                 defended_metric="Target-class confidence (adversarial)",
             ),
             atlas=[
-                technique("AML.T0015", "Evade ML Model", "Defense Evasion"),
-                technique("AML.T0043", "Craft Adversarial Data", "ML Attack Staging"),
+                technique("AML.T0015", "Evade AI Model", "Defense Evasion"),
+                technique("AML.T0043", "Craft Adversarial Data", "AI Attack Staging"),
             ],
         )
 

@@ -79,7 +79,7 @@ class PromptInjection(AttackModule):
                      help="Which injection phrasing to attempt."),
             ],
             atlas=[technique(
-                "AML.T0051", "LLM Prompt Injection", "Defense Evasion",
+                "AML.T0051", "LLM Prompt Injection", "Execution",
                 subtechniques=[
                     AtlasSubtechnique(id="AML.T0051.000", name="Direct"),
                     AtlasSubtechnique(id="AML.T0051.001", name="Indirect"),

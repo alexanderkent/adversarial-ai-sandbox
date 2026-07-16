@@ -1,11 +1,14 @@
 """Curated MITRE ATLAS scaffold for the coverage matrix.
 
-Tactic assignments below reflect atlas.mitre.org at build time; ATLAS is a
-living framework, so re-verify when touching this file. Techniques that span
-multiple tactics are placed in the single column that reads best for the
-lesson matrix.
+Technique names, tactic columns, and assignments below were verified against
+live atlas.mitre.org (ATLAS v2026.06, the "AI" rename release) on 2026-07-16.
+ATLAS is a living framework, so re-verify when touching this file. Techniques
+that span multiple tactics are placed in the single column that reads best for
+the lesson matrix.
 """
-from .schema import AtlasTechnique, AtlasSubtechnique
+from .schema import (
+    AtlasTechnique, AtlasSubtechnique, AtlasMatrix, AtlasColumn, AtlasCell, AtlasAttackRef,
+)
 
 
 def technique(id: str, name: str, tactic: str,
@@ -17,22 +20,21 @@ def technique(id: str, name: str, tactic: str,
     )
 
 
-# Curated tactic columns, in kill-chain order.
+# Curated tactic columns, in ATLAS kill-chain order.
 TACTICS: list[str] = [
     "Resource Development",
-    "ML Model Access",
-    "ML Attack Staging",
+    "AI Model Access",
+    "Execution",
     "Defense Evasion",
+    "AI Attack Staging",
     "Impact",
 ]
 
 # Greyed, not-covered techniques shown for matrix realism.
 CONTEXT_TECHNIQUES: list[AtlasTechnique] = [
-    technique("AML.T0040", "ML Model Inference API Access", "ML Model Access"),
-    technique("AML.T0031", "Erode ML Model Integrity", "Impact"),
+    technique("AML.T0040", "AI Model Inference API Access", "AI Model Access"),
+    technique("AML.T0031", "Erode AI Model Integrity", "Impact"),
 ]
-
-from .schema import AtlasMatrix, AtlasColumn, AtlasCell, AtlasAttackRef
 
 
 def build_matrix(modules) -> AtlasMatrix:

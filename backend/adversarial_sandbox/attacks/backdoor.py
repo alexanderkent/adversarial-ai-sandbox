@@ -61,7 +61,7 @@ class BackdoorAttack(AttackModule):
                 attacked_metric="Attack success rate",
                 defended_metric="Attack success rate (pruned)",
             ),
-            atlas=[technique("AML.T0018", "Backdoor ML Model", "ML Attack Staging")],
+            atlas=[technique("AML.T0018", "Manipulate AI Model", "AI Attack Staging")],
         )
 
     def _sample_figure(self, model, xs, idx):

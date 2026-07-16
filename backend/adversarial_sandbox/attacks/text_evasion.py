@@ -134,7 +134,7 @@ class TextEvasion(AttackModule):
                      min=0.0, max=1.0, step=0.1, default=1.0,
                      help="Fraction of eligible words to perturb."),
             ],
-            atlas=[technique("AML.T0015", "Evade ML Model", "Defense Evasion")],
+            atlas=[technique("AML.T0015", "Evade AI Model", "Defense Evasion")],
         )
 
     def run(self, params):

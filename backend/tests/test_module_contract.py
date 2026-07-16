@@ -34,6 +34,8 @@ def test_run_and_defend_contract(module):
     for method in ("run", "defend"):
         result = getattr(module, method)(defaults)
         assert isinstance(result, RunResult)
-        assert result.figure is not None or result.transcript is not None
+        assert (result.figure is not None
+                or result.transcript is not None
+                or result.text_comparison is not None)
         assert result.metrics
         assert result.narrative

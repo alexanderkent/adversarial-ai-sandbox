@@ -41,6 +41,24 @@ class Transcript(BaseModel):
     caption: str = ""
 
 
+class TextSpan(BaseModel):
+    text: str
+    changed: bool = False
+
+
+class TextVariant(BaseModel):
+    label: str
+    spans: list[TextSpan]
+    score: float
+    score_display: str
+
+
+class TextComparison(BaseModel):
+    kind: Literal["text_comparison"] = "text_comparison"
+    variants: list[TextVariant]
+    caption: str = ""
+
+
 class CodeSnippet(BaseModel):
     label: str
     language: str = "python"
@@ -58,6 +76,7 @@ class RunResult(BaseModel):
     metrics: list[Metric]
     narrative: str
     transcript: Transcript | None = None
+    text_comparison: TextComparison | None = None
 
 
 class AttackDescription(BaseModel):

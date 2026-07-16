@@ -21,12 +21,15 @@ def test_describe_unknown_is_404():
     assert client.get("/attacks/nope").status_code == 404
 
 
-def test_run_poisoning_returns_figure():
+def test_run_poisoning_returns_decision_surface():
     r = client.post("/attacks/poisoning/run",
                     json={"dataset": "blobs", "flip_pct": 30, "n_poison": 10, "seed": 0})
     assert r.status_code == 200
     body = r.json()
-    assert body["figure"]["png_base64"]
+    assert body["figure"] is None
+    ds = body["decision_surface"]
+    assert ds["kind"] == "decision_surface"
+    assert len(ds["states"]) == 2
     assert len(body["metrics"]) == 2
 
 

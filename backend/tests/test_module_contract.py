@@ -36,6 +36,7 @@ def test_run_and_defend_contract(module):
         assert isinstance(result, RunResult)
         assert (result.figure is not None
                 or result.transcript is not None
-                or result.text_comparison is not None)
+                or result.text_comparison is not None
+                or result.decision_surface is not None)
         assert result.metrics
         assert result.narrative

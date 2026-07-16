@@ -15,8 +15,24 @@ def test_attack_drops_accuracy():
     m = PoisoningAttack()
     r = m.run({"dataset": "blobs", "flip_pct": 40, "n_poison": 20, "seed": 0})
     assert _acc(r, "Poisoned accuracy") < _acc(r, "Clean accuracy")
-    assert r.figure.png_base64
+    assert r.figure is None
     assert r.narrative
+    ds = r.decision_surface
+    assert ds is not None and ds.kind == "decision_surface"
+    assert [s.title for s in ds.states] == ["Clean model", "Poisoned model"]
+    assert len(ds.states[1].grid) == ds.states[1].resolution
+    assert all(len(row) == ds.states[1].resolution for row in ds.states[1].grid)
+    assert any(pt.poison for pt in ds.states[1].points)
+    assert ds.states[0].domain == ds.states[1].domain   # shared axes for a true morph
+
+
+def test_defend_returns_decision_surface():
+    m = PoisoningAttack()
+    r = m.defend({"dataset": "blobs", "flip_pct": 20, "n_poison": 30, "seed": 0})
+    ds = r.decision_surface
+    assert ds is not None
+    assert [s.title for s in ds.states] == ["Poisoned model", "After sanitization"]
+    assert r.figure is None
 
 
 def test_defense_recovers_accuracy():

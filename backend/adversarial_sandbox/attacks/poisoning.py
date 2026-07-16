@@ -2,7 +2,10 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 from ..registry import register_attack
 from ..base import AttackModule
-from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec
+from ..schema import (
+    Knob, AttackDescription, RunResult, Metric, SweepSpec,
+    DecisionSurface, DecisionState, DecisionPoint,
+)
 from ..adapters import sklearn2d as s2d
 from ..source import snippet
 from ..atlas import technique
@@ -12,6 +15,9 @@ from ..atlas import technique
 # boundary to contort around poisoned points, so the attack visibly bends the
 # boundary and removing the poison visibly restores it.
 SENSITIVE_C = 50.0
+
+# Resolution of the decision-surface grid sent to the frontend for morphing.
+GRID_RES = 48
 
 # Poison points are injected as a TIGHT cluster ("poison blob") deep in the
 # opposite class's region. Concentrated damage is both more visually dramatic
@@ -122,6 +128,19 @@ class PoisoningAttack(AttackModule):
         mask[len(y):] = True
         return X, y, X_all, y_all, mask
 
+    def _state(self, title, clf, X_pts, y_pts, poison_mask, domain, X_true, y_true):
+        return DecisionState(
+            title=title,
+            domain=domain,
+            resolution=GRID_RES,
+            grid=s2d.decision_grid(clf, domain, GRID_RES),
+            points=[
+                DecisionPoint(x=float(xp), y=float(yp), label=int(lab), poison=bool(pm))
+                for (xp, yp), lab, pm in zip(X_pts, y_pts, poison_mask)
+            ],
+            accuracy=s2d.accuracy(clf, X_true, y_true),
+        )
+
     def run(self, params):
         p = self.clean_params(params)
         X, y, X_all, y_all, mask = self._poison(p)
@@ -129,14 +148,18 @@ class PoisoningAttack(AttackModule):
         pois_clf = s2d.train(X_all, y_all, C=SENSITIVE_C)
         clean_acc = s2d.accuracy(clean_clf, X, y)
         pois_acc = s2d.accuracy(pois_clf, X, y)
-        fig = s2d.render_boundary_comparison([
-            {"clf": clean_clf, "X": X, "y": y,
-             "poison_mask": np.zeros(len(y), bool), "title": "Clean model"},
-            {"clf": pois_clf, "X": X_all, "y": y_all,
-             "poison_mask": mask, "title": "Poisoned model"},
-        ])
+        domain = s2d.decision_domain(X_all)
+        surface = DecisionSurface(
+            states=[
+                self._state("Clean model", clean_clf, X, y,
+                            np.zeros(len(y), bool), domain, X, y),
+                self._state("Poisoned model", pois_clf, X_all, y_all,
+                            mask, domain, X, y),
+            ],
+            caption="Toggle Clean ⇄ Poisoned to watch the boundary bend around the poison blob (✕ = poisoned points).",
+        )
         return RunResult(
-            figure=Figure(png_base64=fig, caption="Green-outlined X = poisoned points (flipped labels + injected poison blob)"),
+            decision_surface=surface,
             metrics=[
                 Metric(label="Clean accuracy", value=clean_acc, display=_pct(clean_acc)),
                 Metric(label="Poisoned accuracy", value=pois_acc, display=_pct(pois_acc)),
@@ -158,14 +181,18 @@ class PoisoningAttack(AttackModule):
         def_clf = s2d.train(X_clean, y_clean, C=SENSITIVE_C)
         def_acc = s2d.accuracy(def_clf, X, y)
 
-        fig = s2d.render_boundary_comparison([
-            {"clf": pois_clf, "X": X_all, "y": y_all,
-             "poison_mask": mask, "title": "Poisoned model"},
-            {"clf": def_clf, "X": X_clean, "y": y_clean,
-             "poison_mask": mask[keep], "title": "After sanitization"},
-        ])
+        domain = s2d.decision_domain(X_all)
+        surface = DecisionSurface(
+            states=[
+                self._state("Poisoned model", pois_clf, X_all, y_all,
+                            mask, domain, X, y),
+                self._state("After sanitization", def_clf, X_clean, y_clean,
+                            mask[keep], domain, X, y),
+            ],
+            caption="Toggle Poisoned ⇄ After sanitization: super-majority cleaning removes the poison blob and the boundary snaps back.",
+        )
         return RunResult(
-            figure=Figure(png_base64=fig, caption="Super-majority label cleaning (removes only points deep in the opposite class, keeps boundary points)"),
+            decision_surface=surface,
             metrics=[
                 Metric(label="Poisoned accuracy", value=pois_acc, display=_pct(pois_acc)),
                 Metric(label="Defended accuracy", value=def_acc, display=_pct(def_acc)),

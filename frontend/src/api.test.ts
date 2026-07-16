@@ -31,7 +31,7 @@ test("runAttack posts params and returns result", async () => {
   );
   vi.stubGlobal("fetch", spy);
   const res = await runAttack("poisoning", { flip_pct: 20 });
-  expect(res.figure.png_base64).toBe("abc");
+  expect(res.figure?.png_base64).toBe("abc");
   const [url, init] = spy.mock.calls[0];
   expect(String(url)).toContain("/attacks/poisoning/run");
   expect(JSON.parse(init!.body as string)).toEqual({ flip_pct: 20 });

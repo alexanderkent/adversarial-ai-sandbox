@@ -27,3 +27,17 @@ test("renders image, caption, metric and narrative", () => {
   expect(screen.getByText("96%")).toBeInTheDocument();
   expect(screen.getByText("Accuracy dropped.")).toBeInTheDocument();
 });
+
+test("renders a transcript when the result has no figure", () => {
+  const result = {
+    metrics: [{ label: "Secret leaked", value: 1, display: "Leaked" }],
+    narrative: "leaked",
+    transcript: {
+      kind: "transcript" as const,
+      turns: [{ role: "assistant" as const, content: "the code is SWORDFISH" }],
+    },
+  };
+  render(<ArtifactPanel result={result} loading={false} error={null} />);
+  expect(screen.getByText("the code is SWORDFISH")).toBeInTheDocument();
+  expect(screen.queryByRole("img")).not.toBeInTheDocument();
+});

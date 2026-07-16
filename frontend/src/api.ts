@@ -65,10 +65,23 @@ export interface Metric {
   display: string;
 }
 
+export interface TranscriptTurn {
+  role: "system" | "user" | "document" | "assistant";
+  content: string;
+  injected?: boolean;
+}
+
+export interface Transcript {
+  kind: "transcript";
+  turns: TranscriptTurn[];
+  caption?: string;
+}
+
 export interface RunResult {
-  figure: Figure;
+  figure?: Figure | null;
   metrics: Metric[];
   narrative: string;
+  transcript?: Transcript | null;
 }
 
 export type Params = Record<string, number | boolean | string>;

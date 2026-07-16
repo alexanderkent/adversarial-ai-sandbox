@@ -1,5 +1,6 @@
 import type { RunResult } from "../api";
 import { MetricBars } from "./MetricBars";
+import { TranscriptView } from "./TranscriptView";
 
 interface Props {
   result: RunResult | null;
@@ -23,16 +24,20 @@ export function ArtifactPanel({ result, loading, error }: Props) {
   }
   return (
     <div className="flex flex-col gap-4">
-      <figure className="m-0">
-        <img
-          src={`data:image/png;base64,${result.figure.png_base64}`}
-          alt={result.figure.caption || "attack artifact"}
-          className="w-full rounded border border-slate-200"
-        />
-        {result.figure.caption && (
-          <figcaption className="mt-1 text-xs text-slate-500">{result.figure.caption}</figcaption>
-        )}
-      </figure>
+      {result.transcript ? (
+        <TranscriptView transcript={result.transcript} />
+      ) : result.figure ? (
+        <figure className="m-0">
+          <img
+            src={`data:image/png;base64,${result.figure.png_base64}`}
+            alt={result.figure.caption || "attack artifact"}
+            className="w-full rounded border border-slate-200"
+          />
+          {result.figure.caption && (
+            <figcaption className="mt-1 text-xs text-slate-500">{result.figure.caption}</figcaption>
+          )}
+        </figure>
+      ) : null}
       <MetricBars metrics={result.metrics} />
       <p className="text-sm text-slate-700">{result.narrative}</p>
     </div>

@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from ..registry import register_attack
 from ..base import AttackModule
-from ..schema import Knob, AttackDescription, RunResult, Figure, Metric
+from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec
 from ..adapters import mnist
 from ..adapters.attacks_torch import cw_l2_targeted
 from ..source import snippet
@@ -48,6 +48,14 @@ class CarliniWagnerAttack(AttackModule):
                      min=20, max=200, step=10, default=100,
                      help="Adam iterations; more = stronger attack but slower."),
             ],
+            sweep=SweepSpec(
+                x_knob="confidence",
+                x_values=[0, 5, 10, 15, 20],
+                x_label="Confidence (kappa)",
+                y_label="Target-class confidence",
+                attacked_metric="Target-class confidence (adversarial)",
+                defended_metric="Target-class confidence (adversarial)",
+            ),
         )
 
     def _evaluate(self, model_path, p):

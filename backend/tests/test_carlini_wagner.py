@@ -37,3 +37,11 @@ def test_defend_runs_on_robust_model():
     r = m.defend({"sample_index": 0, "target": "8", "confidence": 0, "steps": 60})
     assert r.figure.png_base64
     assert r.narrative
+
+
+def test_cw_sweep_spec_is_consistent():
+    m = CarliniWagnerAttack()
+    d = m.describe()
+    assert d.sweep is not None and d.sweep.x_knob == "confidence"
+    assert d.sweep.attacked_metric in {mt.label for mt in m.run({}).metrics}
+    assert d.sweep.defended_metric in {mt.label for mt in m.defend({}).metrics}

@@ -33,3 +33,11 @@ def test_defend_reduces_attack_success_rate():
     # fine-pruning substantially reduces (does not fully erase) the sticky backdoor
     assert _metric(defended, "Attack success rate (pruned)") < _metric(attacked, "Attack success rate") - 0.15
     assert _metric(defended, "Clean accuracy (pruned)") > 0.9
+
+
+def test_backdoor_sweep_spec_is_consistent():
+    m = BackdoorAttack()
+    d = m.describe()
+    assert d.sweep is not None and d.sweep.x_knob == "prune_fraction"
+    assert d.sweep.attacked_metric in {mt.label for mt in m.run({}).metrics}
+    assert d.sweep.defended_metric in {mt.label for mt in m.defend({}).metrics}

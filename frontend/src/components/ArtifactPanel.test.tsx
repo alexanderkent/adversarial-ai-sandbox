@@ -55,3 +55,23 @@ test("renders a text comparison when the result has one", () => {
   expect(screen.getByText("Original")).toBeInTheDocument();
   expect(screen.queryByRole("img")).not.toBeInTheDocument();
 });
+
+test("renders a decision surface when the result has one", () => {
+  const result = {
+    metrics: [{ label: "Clean accuracy", value: 0.9, display: "90%" }],
+    narrative: "poisoned",
+    decision_surface: {
+      kind: "decision_surface" as const,
+      states: [
+        { title: "Clean model", domain: { x_min: 0, x_max: 1, y_min: 0, y_max: 1 },
+          resolution: 1, grid: [[0]], points: [], accuracy: 0.9 },
+        { title: "Poisoned model", domain: { x_min: 0, x_max: 1, y_min: 0, y_max: 1 },
+          resolution: 1, grid: [[1]], points: [], accuracy: 0.6 },
+      ],
+    },
+  };
+  render(<ArtifactPanel result={result} loading={false} error={null} />);
+  expect(screen.getByRole("button", { name: "Clean model" })).toBeInTheDocument();
+  expect(screen.getByText("poisoned")).toBeInTheDocument();
+  expect(screen.queryByRole("img")).not.toBeInTheDocument();
+});

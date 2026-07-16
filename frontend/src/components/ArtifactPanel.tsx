@@ -2,6 +2,7 @@ import type { RunResult } from "../api";
 import { MetricBars } from "./MetricBars";
 import { TranscriptView } from "./TranscriptView";
 import { TextComparisonView } from "./TextComparisonView";
+import { DecisionSurfaceView } from "./DecisionSurfaceView";
 
 interface Props {
   result: RunResult | null;
@@ -31,6 +32,8 @@ export function ArtifactPanel({ result, loading, error }: Props) {
           <TranscriptView transcript={result.transcript} />
         ) : result.text_comparison ? (
           <TextComparisonView comparison={result.text_comparison} />
+        ) : result.decision_surface ? (
+          <DecisionSurfaceView surface={result.decision_surface} />
         ) : result.figure ? (
           <figure className="m-0">
             <img

@@ -132,12 +132,42 @@ export interface TextComparison {
   caption?: string;
 }
 
+export interface DecisionDomain {
+  x_min: number;
+  x_max: number;
+  y_min: number;
+  y_max: number;
+}
+
+export interface DecisionPoint {
+  x: number;
+  y: number;
+  label: number;
+  poison?: boolean;
+}
+
+export interface DecisionState {
+  title: string;
+  domain: DecisionDomain;
+  grid: number[][];
+  resolution: number;
+  points: DecisionPoint[];
+  accuracy: number;
+}
+
+export interface DecisionSurface {
+  kind: "decision_surface";
+  states: DecisionState[];
+  caption?: string;
+}
+
 export interface RunResult {
   figure?: Figure | null;
   metrics: Metric[];
   narrative: string;
   transcript?: Transcript | null;
   text_comparison?: TextComparison | null;
+  decision_surface?: DecisionSurface | null;
 }
 
 export type Params = Record<string, number | boolean | string>;

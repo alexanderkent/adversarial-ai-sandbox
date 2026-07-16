@@ -19,7 +19,7 @@ export function LessonPanel({
               key={t.id}
               className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-semibold text-primary"
             >
-              <button onClick={() => onShowTechnique?.(t.id)} className="hover:underline">
+              <button type="button" onClick={() => onShowTechnique?.(t.id)} className="hover:underline">
                 {t.id} · {t.name}
               </button>
               <a

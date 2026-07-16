@@ -17,6 +17,7 @@ export function AttackSidebar({ attacks, selectedId, onSelect, atlasActive, onSh
   return (
     <nav className="flex flex-col gap-4">
       <button
+        type="button"
         onClick={() => onShowAtlas?.()}
         aria-current={atlasActive}
         className={`w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition ${

@@ -1,7 +1,7 @@
 import pytest
 from adversarial_sandbox.schema import Knob, validate_params, RunResult, Figure, Metric, SweepSpec, AttackDescription, Transcript, TranscriptTurn, TextComparison, TextVariant, TextSpan
 from adversarial_sandbox.schema import (
-    AttackDescription, AtlasTechnique, AtlasSubtechnique,
+    AtlasTechnique, AtlasSubtechnique,
     AtlasCell, AtlasColumn, AtlasMatrix, AtlasAttackRef,
 )
 
@@ -108,7 +108,7 @@ def test_attack_description_accepts_atlas():
     d = AttackDescription(
         id="x", name="X", group="G", summary="s", formula="f", threat_model="t",
         knobs=[],
-        atlas=[AtlasTechnique(id="AML.T0015", name="Evade ML Model",
+        atlas=[AtlasTechnique(id="AML.T0015", name="Evade AI Model",
                               tactic="Defense Evasion",
                               url="https://atlas.mitre.org/techniques/AML.T0015")],
     )

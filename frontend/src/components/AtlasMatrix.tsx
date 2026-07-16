@@ -52,6 +52,7 @@ export function AtlasMatrix({ matrix, onSelectAttack, focusId }: Props) {
                       {cell.attacks.map((a) => (
                         <button
                           key={a.attack_id}
+                          type="button"
                           onClick={() => onSelectAttack(a.attack_id)}
                           className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] transition hover:bg-white/30"
                         >

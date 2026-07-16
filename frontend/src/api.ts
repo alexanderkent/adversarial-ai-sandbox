@@ -21,12 +21,30 @@ export interface AttackSummary {
   summary: string;
 }
 
+export interface SweepSpec {
+  x_knob: string;
+  x_values: number[];
+  x_label: string;
+  y_label: string;
+  attacked_metric: string;
+  defended_metric: string | null;
+}
+
+export interface SweepPoint {
+  x?: number;
+  attacked?: number;
+  defended?: number;
+  error?: string;
+  done?: boolean;
+}
+
 export interface AttackDescription extends AttackSummary {
   formula: string;
   threat_model: string;
   knobs: Knob[];
   has_defense: boolean;
   code?: CodeSnippet[];
+  sweep?: SweepSpec | null;
 }
 
 export interface CodeSnippet {
@@ -100,4 +118,36 @@ export async function runAttack(id: string, params: Params): Promise<RunResult> 
 
 export async function defendAttack(id: string, params: Params): Promise<RunResult> {
   return toJson(await post(`/attacks/${id}/defend`, params));
+}
+
+export async function* streamSweep(
+  id: string,
+  params: Params,
+  signal?: AbortSignal,
+): AsyncGenerator<SweepPoint> {
+  const res = await fetch(`${API_BASE}/attacks/${id}/sweep`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(params),
+    signal,
+  });
+  if (!res.ok || !res.body) {
+    throw new ApiError(res.status, res.statusText || `HTTP ${res.status}`);
+  }
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let nl: number;
+    while ((nl = buffer.indexOf("\n")) >= 0) {
+      const line = buffer.slice(0, nl).trim();
+      buffer = buffer.slice(nl + 1);
+      if (line) yield JSON.parse(line) as SweepPoint;
+    }
+  }
+  const tail = buffer.trim();
+  if (tail) yield JSON.parse(tail) as SweepPoint;
 }

@@ -38,3 +38,14 @@ def test_pgd_mode_runs_and_perturbs():
     assert r.figure.png_base64
     assert "PGD" in r.narrative
     assert _metric(r, "Adversarial confidence") <= _metric(r, "Clean confidence")
+
+
+def test_perturbation_sweep_spec_is_consistent():
+    m = PerturbationAttack()
+    d = m.describe()
+    assert d.sweep is not None
+    assert d.sweep.x_knob == "epsilon"
+    run_labels = {mt.label for mt in m.run({}).metrics}
+    def_labels = {mt.label for mt in m.defend({}).metrics}
+    assert d.sweep.attacked_metric in run_labels
+    assert d.sweep.defended_metric in def_labels

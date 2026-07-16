@@ -50,3 +50,33 @@ test("switches to the Code tab and shows the source", async () => {
   fireEvent.click(screen.getByRole("tab", { name: "Code" }));
   expect(screen.getByText("FGSM")).toBeInTheDocument();
 });
+
+const descWithSweep: api.AttackDescription = {
+  ...desc,
+  id: "perturbation",
+  name: "Perturbation",
+  sweep: {
+    x_knob: "epsilon",
+    x_values: [0, 0.1],
+    x_label: "Epsilon",
+    y_label: "Confidence",
+    attacked_metric: "Adversarial confidence",
+    defended_metric: "Adversarial confidence",
+  },
+};
+
+test("shows a Sweep tab and panel when the description has a sweep spec", async () => {
+  vi.spyOn(api, "getAttack").mockResolvedValue(descWithSweep);
+  render(<AttackView attackId="perturbation" />);
+  await waitFor(() => screen.getByRole("heading", { name: "Perturbation" }));
+  const sweepTab = screen.getByRole("tab", { name: /sweep/i });
+  fireEvent.click(sweepTab);
+  expect(screen.getByRole("button", { name: /run sweep/i })).toBeInTheDocument();
+});
+
+test("hides the Sweep tab when the description has no sweep spec", async () => {
+  vi.spyOn(api, "getAttack").mockResolvedValue(desc);
+  render(<AttackView attackId="poisoning" />);
+  await waitFor(() => screen.getByRole("heading", { name: "Data Poisoning" }));
+  expect(screen.queryByRole("tab", { name: /sweep/i })).not.toBeInTheDocument();
+});

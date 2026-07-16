@@ -14,6 +14,15 @@ class Knob(BaseModel):
     help: str = ""
 
 
+class SweepSpec(BaseModel):
+    x_knob: str
+    x_values: list[float]
+    x_label: str
+    y_label: str
+    attacked_metric: str
+    defended_metric: str | None = None
+
+
 class Figure(BaseModel):
     kind: Literal["figure"] = "figure"
     png_base64: str
@@ -47,6 +56,7 @@ class AttackDescription(BaseModel):
     threat_model: str
     knobs: list[Knob]
     has_defense: bool = True
+    sweep: SweepSpec | None = None
     code: list[CodeSnippet] = []
 
 

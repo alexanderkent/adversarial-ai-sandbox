@@ -1,7 +1,7 @@
 import torch
 from ..registry import register_attack
 from ..base import AttackModule
-from ..schema import Knob, AttackDescription, RunResult, Figure, Metric
+from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec
 from ..adapters import mnist
 from ..source import snippet
 
@@ -52,6 +52,14 @@ class BackdoorAttack(AttackModule):
                      help="Defense: fraction of channels to prune before a clean fine-tune. "
                           "More pruning removes more of the backdoor, at some clean-accuracy cost."),
             ],
+            sweep=SweepSpec(
+                x_knob="prune_fraction",
+                x_values=[0.0, 0.3, 0.5, 0.7, 0.9],
+                x_label="Fine-pruning fraction",
+                y_label="Attack success rate",
+                attacked_metric="Attack success rate",
+                defended_metric="Attack success rate (pruned)",
+            ),
         )
 
     def _sample_figure(self, model, xs, idx):

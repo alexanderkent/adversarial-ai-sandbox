@@ -5,13 +5,14 @@ import { LessonPanel } from "./LessonPanel";
 import { CodePanel } from "./CodePanel";
 import { ControlPanel } from "./ControlPanel";
 import { ArtifactPanel } from "./ArtifactPanel";
+import { SweepPanel } from "./SweepPanel";
 
 export function AttackView({ attackId }: { attackId: string }) {
   const [description, setDescription] = useState<AttackDescription | null>(null);
   const [params, setParams] = useState<Params>({});
   const [defenseOn, setDefenseOn] = useState(false);
   const [descError, setDescError] = useState<string | null>(null);
-  const [tab, setTab] = useState<"lesson" | "code">("lesson");
+  const [tab, setTab] = useState<"lesson" | "code" | "sweep">("lesson");
   const { result, loading, error, execute, reset } = useRun(attackId);
 
   useEffect(() => {
@@ -51,7 +52,11 @@ export function AttackView({ attackId }: { attackId: string }) {
       <div className="flex flex-col gap-6">
         <div>
           <div role="tablist" className="mb-3 flex gap-2 border-b border-slate-200">
-            {(["lesson", "code"] as const).map((t) => (
+            {([
+              ["lesson", "Lesson"],
+              ["code", "Code"],
+              ...(description.sweep ? [["sweep", "Sweep"] as const] : []),
+            ] as const).map(([t, label]) => (
               <button
                 key={t}
                 role="tab"
@@ -63,14 +68,14 @@ export function AttackView({ attackId }: { attackId: string }) {
                     : "border-transparent text-slate-500 hover:text-slate-700"
                 }`}
               >
-                {t === "lesson" ? "Lesson" : "Code"}
+                {label}
               </button>
             ))}
           </div>
-          {tab === "lesson" ? (
-            <LessonPanel description={description} />
-          ) : (
-            <CodePanel code={description.code ?? []} />
+          {tab === "lesson" && <LessonPanel description={description} />}
+          {tab === "code" && <CodePanel code={description.code ?? []} />}
+          {tab === "sweep" && description.sweep && (
+            <SweepPanel attackId={attackId} spec={description.sweep} params={params} />
           )}
         </div>
         <ControlPanel

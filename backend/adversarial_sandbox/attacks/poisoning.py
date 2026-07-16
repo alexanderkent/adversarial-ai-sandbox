@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 from ..registry import register_attack
 from ..base import AttackModule
-from ..schema import Knob, AttackDescription, RunResult, Figure, Metric
+from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec
 from ..adapters import sklearn2d as s2d
 from ..source import snippet
 
@@ -77,6 +77,14 @@ class PoisoningAttack(AttackModule):
                 Knob(name="seed", label="Random seed", type="slider",
                      min=0, max=50, step=1, default=0),
             ],
+            sweep=SweepSpec(
+                x_knob="n_poison",
+                x_values=[0, 10, 20, 30, 40],
+                x_label="Injected poison points",
+                y_label="Accuracy on true data",
+                attacked_metric="Poisoned accuracy",
+                defended_metric="Defended accuracy",
+            ),
         )
 
     def _poison(self, p):

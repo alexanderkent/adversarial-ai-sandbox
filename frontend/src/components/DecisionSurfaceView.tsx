@@ -48,6 +48,7 @@ export function DecisionSurfaceView({ surface }: { surface: DecisionSurface }) {
       <svg
         viewBox={`0 0 ${W} ${H}`}
         className="w-full rounded-lg border border-border bg-surface"
+        role="img"
         aria-label="Decision boundary"
       >
         {grid.map((row, r) =>

@@ -70,8 +70,8 @@ test("renders a decision surface when the result has one", () => {
       ],
     },
   };
-  render(<ArtifactPanel result={result} loading={false} error={null} />);
+  const { container } = render(<ArtifactPanel result={result} loading={false} error={null} />);
   expect(screen.getByRole("button", { name: "Clean model" })).toBeInTheDocument();
   expect(screen.getByText("poisoned")).toBeInTheDocument();
-  expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  expect(container.querySelector("img")).toBeNull();
 });

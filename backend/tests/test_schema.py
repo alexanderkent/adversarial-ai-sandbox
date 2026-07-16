@@ -1,5 +1,5 @@
 import pytest
-from adversarial_sandbox.schema import Knob, validate_params, RunResult, Figure, Metric
+from adversarial_sandbox.schema import Knob, validate_params, RunResult, Figure, Metric, SweepSpec, AttackDescription
 
 
 KNOBS = [
@@ -36,3 +36,20 @@ def test_runresult_roundtrips():
         narrative="hello",
     )
     assert r.model_dump()["figure"]["kind"] == "figure"
+
+
+def test_sweepspec_defaults_defended_metric_none():
+    s = SweepSpec(
+        x_knob="epsilon", x_values=[0.0, 0.1, 0.2], x_label="Epsilon",
+        y_label="Confidence", attacked_metric="Adversarial confidence",
+    )
+    assert s.defended_metric is None
+    assert s.x_values == [0.0, 0.1, 0.2]
+
+
+def test_attackdescription_sweep_defaults_none():
+    d = AttackDescription(
+        id="x", name="X", group="G", summary="s", formula="f",
+        threat_model="t", knobs=[],
+    )
+    assert d.sweep is None

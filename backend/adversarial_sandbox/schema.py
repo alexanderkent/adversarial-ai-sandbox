@@ -79,6 +79,42 @@ class RunResult(BaseModel):
     text_comparison: TextComparison | None = None
 
 
+class AtlasSubtechnique(BaseModel):
+    id: str
+    name: str
+
+
+class AtlasTechnique(BaseModel):
+    id: str
+    name: str
+    tactic: str
+    url: str
+    subtechniques: list[AtlasSubtechnique] = []
+
+
+class AtlasAttackRef(BaseModel):
+    attack_id: str
+    attack_name: str
+
+
+class AtlasCell(BaseModel):
+    id: str
+    name: str
+    url: str
+    covered: bool
+    subtechniques: list[AtlasSubtechnique] = []
+    attacks: list[AtlasAttackRef] = []
+
+
+class AtlasColumn(BaseModel):
+    tactic: str
+    cells: list[AtlasCell]
+
+
+class AtlasMatrix(BaseModel):
+    tactics: list[AtlasColumn]
+
+
 class AttackDescription(BaseModel):
     id: str
     name: str
@@ -90,6 +126,7 @@ class AttackDescription(BaseModel):
     has_defense: bool = True
     sweep: SweepSpec | None = None
     code: list[CodeSnippet] = []
+    atlas: list[AtlasTechnique] = []
 
 
 def validate_params(knobs: list[Knob], params: dict) -> dict:

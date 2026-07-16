@@ -1,5 +1,9 @@
 import pytest
 from adversarial_sandbox.schema import Knob, validate_params, RunResult, Figure, Metric, SweepSpec, AttackDescription, Transcript, TranscriptTurn, TextComparison, TextVariant, TextSpan
+from adversarial_sandbox.schema import (
+    AttackDescription, AtlasTechnique, AtlasSubtechnique,
+    AtlasCell, AtlasColumn, AtlasMatrix, AtlasAttackRef,
+)
 
 
 KNOBS = [
@@ -98,3 +102,30 @@ def test_runresult_allows_text_comparison_only():
         narrative="n",
     )
     assert r.figure is None and r.transcript is None and r.text_comparison is not None
+
+
+def test_attack_description_accepts_atlas():
+    d = AttackDescription(
+        id="x", name="X", group="G", summary="s", formula="f", threat_model="t",
+        knobs=[],
+        atlas=[AtlasTechnique(id="AML.T0015", name="Evade ML Model",
+                              tactic="Defense Evasion",
+                              url="https://atlas.mitre.org/techniques/AML.T0015")],
+    )
+    assert d.atlas[0].id == "AML.T0015"
+    assert d.atlas[0].subtechniques == []
+
+
+def test_atlas_description_atlas_defaults_empty():
+    d = AttackDescription(id="x", name="X", group="G", summary="s",
+                          formula="f", threat_model="t", knobs=[])
+    assert d.atlas == []
+
+
+def test_atlas_matrix_model_builds():
+    cell = AtlasCell(id="AML.T0051", name="LLM Prompt Injection",
+                     url="https://atlas.mitre.org/techniques/AML.T0051", covered=True,
+                     subtechniques=[AtlasSubtechnique(id="AML.T0051.000", name="Direct")],
+                     attacks=[AtlasAttackRef(attack_id="prompt_injection", attack_name="Prompt Injection")])
+    m = AtlasMatrix(tactics=[AtlasColumn(tactic="Defense Evasion", cells=[cell])])
+    assert m.tactics[0].cells[0].attacks[0].attack_id == "prompt_injection"

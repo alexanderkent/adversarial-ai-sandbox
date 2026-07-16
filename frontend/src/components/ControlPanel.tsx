@@ -34,11 +34,12 @@ export function ControlPanel({
       </div>
 
       {description.has_defense && (
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex items-center gap-2 text-sm text-ink">
           <input
             type="checkbox"
             checked={defenseOn}
             onChange={(e) => onDefenseToggle(e.target.checked)}
+            className="accent-[var(--primary)]"
           />
           <span>Apply defense</span>
         </label>
@@ -47,7 +48,7 @@ export function ControlPanel({
       <button
         onClick={onRun}
         disabled={loading}
-        className="rounded bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+        className="rounded-lg bg-primary px-4 py-2 font-medium text-on-primary shadow-[var(--shadow)] transition hover:bg-primary-strong disabled:opacity-50"
       >
         {loading ? "Running…" : defenseOn ? "Run with defense" : "Run attack"}
       </button>

@@ -9,3 +9,4 @@ backend/models/*/
 backend/_data/
 node_modules/
 dist/
+.superpowers/

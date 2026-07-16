@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { listAttacks, runAttack, streamSweep, type SweepPoint } from "./api";
+import { listAtlas, listAttacks, runAttack, streamSweep, type SweepPoint } from "./api";
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -69,4 +69,20 @@ test("streamSweep parses NDJSON across chunk boundaries", async () => {
     { x: 1, attacked: 0.2 },
     { done: true },
   ]);
+});
+
+test("listAtlas fetches /atlas and returns the matrix", async () => {
+  const spy = vi.fn(
+    (_url: RequestInfo | URL): Promise<Response> =>
+      Promise.resolve({
+        ok: true, status: 200, statusText: "",
+        json: async () => ({ tactics: [{ tactic: "Defense Evasion", cells: [
+          { id: "AML.T0015", name: "Evade ML Model", url: "u", covered: true, attacks: [] },
+        ] }] }),
+      } as unknown as Response),
+  );
+  vi.stubGlobal("fetch", spy);
+  const m = await listAtlas();
+  expect(m.tactics[0].cells[0].id).toBe("AML.T0015");
+  expect(String(spy.mock.calls[0][0])).toContain("/atlas");
 });

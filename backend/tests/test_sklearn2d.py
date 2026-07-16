@@ -24,3 +24,20 @@ def test_render_returns_png_base64():
     ])
     raw = base64.b64decode(b64)
     assert raw[:8] == b"\x89PNG\r\n\x1a\n"  # PNG magic bytes
+
+
+def test_decision_grid_shape_and_orientation():
+    import numpy as np
+    from adversarial_sandbox.adapters import sklearn2d as s2d
+    # separable: class 0 bottom-left, class 1 top-right
+    X = np.array([[-2., -2.], [-2., -1.5], [2., 2.], [2., 1.5]])
+    y = np.array([0, 0, 1, 1])
+    clf = s2d.train(X, y, C=1.0)
+    dom = s2d.decision_domain(X)
+    assert dom.x_min < -2 and dom.x_max > 2  # padded
+    g = s2d.decision_grid(clf, dom, 24)
+    assert len(g) == 24 and all(len(r) == 24 for r in g)
+    assert {v for row in g for v in row} <= {0, 1}
+    # row 0 is TOP (max y) → top-right corner is class 1; bottom-left is class 0
+    assert g[0][-1] == 1
+    assert g[-1][0] == 0

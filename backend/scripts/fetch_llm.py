@@ -1,4 +1,4 @@
-"""Download the local instruction LLM into the models volume (one-time, ~1 GB)."""
+"""Download the local instruction LLM into the models volume (one-time, ~3 GB)."""
 from huggingface_hub import snapshot_download
 from adversarial_sandbox.adapters import genai
 

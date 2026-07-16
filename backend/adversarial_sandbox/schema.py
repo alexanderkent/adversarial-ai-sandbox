@@ -29,6 +29,18 @@ class Figure(BaseModel):
     caption: str = ""
 
 
+class TranscriptTurn(BaseModel):
+    role: Literal["system", "user", "document", "assistant"]
+    content: str
+    injected: bool = False
+
+
+class Transcript(BaseModel):
+    kind: Literal["transcript"] = "transcript"
+    turns: list[TranscriptTurn]
+    caption: str = ""
+
+
 class CodeSnippet(BaseModel):
     label: str
     language: str = "python"
@@ -42,9 +54,10 @@ class Metric(BaseModel):
 
 
 class RunResult(BaseModel):
-    figure: Figure
+    figure: Figure | None = None
     metrics: list[Metric]
     narrative: str
+    transcript: Transcript | None = None
 
 
 class AttackDescription(BaseModel):

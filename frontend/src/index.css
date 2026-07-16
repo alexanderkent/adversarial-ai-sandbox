@@ -1,1 +1,28 @@
 @import "tailwindcss";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --canvas: #f8fafc; --surface: #ffffff; --surface-2: #f1f5f9; --border: #e2e8f0;
+  --ink: #0f172a; --ink-muted: #64748b; --ink-subtle: #94a3b8;
+  --primary: #6366f1; --primary-strong: #4f46e5; --primary-soft: #eef2ff; --on-primary: #ffffff;
+  --accent: #14b8a6; --warn: #f59e0b; --danger: #ef4444;
+  --chart-attacked: #6366f1; --chart-defended: #14b8a6; --highlight: #fde68a;
+  --shadow: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+}
+[data-theme="dark"] {
+  --canvas: #0b1220; --surface: #131c2e; --surface-2: #1e293b; --border: #26324a;
+  --ink: #e6edf6; --ink-muted: #9aa7bd; --ink-subtle: #6b7a94;
+  --primary: #818cf8; --primary-strong: #a5b4fc; --primary-soft: #1e2540; --on-primary: #0b1220;
+  --accent: #2dd4bf; --warn: #fbbf24; --danger: #f87171;
+  --chart-attacked: #818cf8; --chart-defended: #2dd4bf; --highlight: #713f12;
+  --shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+@theme inline {
+  --color-canvas: var(--canvas); --color-surface: var(--surface); --color-surface-2: var(--surface-2);
+  --color-border: var(--border); --color-ink: var(--ink); --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle); --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong); --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--on-primary); --color-accent: var(--accent);
+  --color-warn: var(--warn); --color-danger: var(--danger);
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

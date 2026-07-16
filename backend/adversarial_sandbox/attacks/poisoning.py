@@ -5,6 +5,7 @@ from ..base import AttackModule
 from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec
 from ..adapters import sklearn2d as s2d
 from ..source import snippet
+from ..atlas import technique
 
 
 # A label-noise-SENSITIVE classifier: high C (near hard margin) forces the
@@ -85,6 +86,7 @@ class PoisoningAttack(AttackModule):
                 attacked_metric="Poisoned accuracy",
                 defended_metric="Defended accuracy",
             ),
+            atlas=[technique("AML.T0020", "Poison Training Data", "Resource Development")],
         )
 
     def _poison(self, p):

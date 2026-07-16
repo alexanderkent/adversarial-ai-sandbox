@@ -4,6 +4,7 @@ from ..base import AttackModule
 from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec
 from ..adapters import mnist
 from ..source import snippet
+from ..atlas import technique
 
 
 def _clean_accuracy(model, xs, ys):
@@ -60,6 +61,7 @@ class BackdoorAttack(AttackModule):
                 attacked_metric="Attack success rate",
                 defended_metric="Attack success rate (pruned)",
             ),
+            atlas=[technique("AML.T0018", "Backdoor ML Model", "ML Attack Staging")],
         )
 
     def _sample_figure(self, model, xs, idx):

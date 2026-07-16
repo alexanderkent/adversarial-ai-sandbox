@@ -16,7 +16,7 @@ export function AttackSidebar({ attacks, selectedId, onSelect }: Props) {
     <nav className="flex flex-col gap-4">
       {groups.map((group) => (
         <div key={group}>
-          <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">{group}</h3>
+          <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-ink-subtle">{group}</h3>
           <ul className="flex flex-col gap-1">
             {attacks
               .filter((a) => a.group === group)
@@ -25,11 +25,7 @@ export function AttackSidebar({ attacks, selectedId, onSelect }: Props) {
                   <button
                     onClick={() => onSelect(a.id)}
                     aria-current={a.id === selectedId}
-                    className={`w-full rounded px-3 py-2 text-left text-sm ${
-                      a.id === selectedId
-                        ? "bg-indigo-100 font-medium text-indigo-800"
-                        : "text-slate-700 hover:bg-slate-100"
-                    }`}
+                    className={`w-full rounded-lg px-3 py-2 text-left text-sm transition ${a.id === selectedId ? "bg-primary-soft font-medium text-primary" : "text-ink-muted hover:bg-surface-2 hover:text-ink"}`}
                   >
                     {a.name}
                   </button>

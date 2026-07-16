@@ -18,11 +18,13 @@ docker compose up --build
 ```
 Then open **http://localhost:5173** (the API is on http://localhost:8000).
 
-The first build is slow (~5 min): the backend's builder stage downloads MNIST and trains
-the model checkpoints, then copies them into a lean runtime image. Subsequent starts are
-fast. Needs network access during the build.
+On the **first run**, the backend trains the MNIST model checkpoints (downloads MNIST,
+~5 min) into a persistent `mnist-models` volume, then serves. Every start after that
+reuses the persisted checkpoints and is fast — image rebuilds do not retrain. Needs
+network access on the first run.
 
-Stop with `docker compose down`.
+Stop with `docker compose down` (keeps the checkpoints). Use `docker compose down -v` to
+also remove the volume, which forces retraining on the next run.
 
 ## Run locally (for development)
 

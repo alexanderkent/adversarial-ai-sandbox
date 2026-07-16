@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect, test, vi } from "vitest";
 import type { AttackSummary } from "../api";
 import { AttackSidebar } from "./AttackSidebar";
@@ -20,4 +21,16 @@ test("clicking an attack calls onSelect", () => {
   render(<AttackSidebar attacks={attacks} selectedId="poisoning" onSelect={onSelect} />);
   fireEvent.click(screen.getByRole("button", { name: "Adversarial Perturbation" }));
   expect(onSelect).toHaveBeenCalledWith("perturbation");
+});
+
+test("ATLAS entry is current when active and fires onShowAtlas", async () => {
+  const onShowAtlas = vi.fn();
+  render(
+    <AttackSidebar attacks={attacks} selectedId={null} onSelect={() => {}}
+      atlasActive={true} onShowAtlas={onShowAtlas} />,
+  );
+  const btn = screen.getByRole("button", { name: /MITRE ATLAS/i });
+  expect(btn).toHaveAttribute("aria-current", "true");
+  await userEvent.click(btn);
+  expect(onShowAtlas).toHaveBeenCalled();
 });

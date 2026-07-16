@@ -1,5 +1,5 @@
 import pytest
-from adversarial_sandbox.schema import Knob, validate_params, RunResult, Figure, Metric, SweepSpec, AttackDescription, Transcript, TranscriptTurn
+from adversarial_sandbox.schema import Knob, validate_params, RunResult, Figure, Metric, SweepSpec, AttackDescription, Transcript, TranscriptTurn, TextComparison, TextVariant, TextSpan
 
 
 KNOBS = [
@@ -74,3 +74,27 @@ def test_runresult_allows_transcript_without_figure():
     )
     assert r.figure is None
     assert r.transcript is not None
+
+
+def test_text_comparison_roundtrips():
+    tc = TextComparison(variants=[
+        TextVariant(label="Original",
+                    spans=[TextSpan(text="ignore", changed=False)],
+                    score=0.96, score_display="96%"),
+        TextVariant(label="Perturbed (homoglyph)",
+                    spans=[TextSpan(text="іgnоrе", changed=True)],
+                    score=0.12, score_display="12%"),
+    ], caption="c")
+    d = tc.model_dump()
+    assert d["kind"] == "text_comparison"
+    assert d["variants"][1]["spans"][0]["changed"] is True
+
+
+def test_runresult_allows_text_comparison_only():
+    r = RunResult(
+        text_comparison=TextComparison(variants=[
+            TextVariant(label="Original", spans=[TextSpan(text="hi")], score=0.5, score_display="50%")]),
+        metrics=[Metric(label="Detected as injection (original)", value=0.5, display="50%")],
+        narrative="n",
+    )
+    assert r.figure is None and r.transcript is None and r.text_comparison is not None

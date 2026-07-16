@@ -15,7 +15,8 @@ interface SweepChartProps {
 export function SweepChart({ points, xLabel, yLabel, defendedLabel }: SweepChartProps) {
   const valid = points.filter((p) => typeof p.x === "number" && p.error === undefined);
   const xs = valid.map((p) => p.x as number);
-  const xMin = Math.min(...xs, 0), xMax = Math.max(...xs, 1);
+  const xMin = xs.length ? Math.min(...xs) : 0;
+  const xMax = xs.length ? Math.max(...xs) : 1;
   const px = (x: number) => M.l + ((x - xMin) / (xMax - xMin || 1)) * (W - M.l - M.r);
   const py = (y: number) => M.t + (1 - Math.max(0, Math.min(1, y))) * (H - M.t - M.b);
 

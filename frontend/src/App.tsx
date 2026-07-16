@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { API_BASE, listAttacks, type AttackSummary } from "./api";
 import { AttackSidebar } from "./components/AttackSidebar";
 import { AttackView } from "./components/AttackView";
+import { ThemeToggle } from "./components/ThemeToggle";
 
 export default function App() {
   const [attacks, setAttacks] = useState<AttackSummary[]>([]);
@@ -18,15 +19,18 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-200 bg-white px-6 py-4">
-        <h1 className="text-xl font-bold">Adversarial Sandbox</h1>
-        <p className="text-sm text-slate-500">Tinker with adversarial ML attacks and defenses</p>
+    <div className="min-h-screen bg-canvas text-ink">
+      <header className="flex items-center justify-between border-b border-border bg-surface px-6 py-4">
+        <div>
+          <h1 className="text-xl font-bold">Adversarial Sandbox</h1>
+          <p className="text-sm text-ink-muted">Tinker with adversarial ML attacks and defenses</p>
+        </div>
+        <ThemeToggle />
       </header>
       <div className="grid gap-6 p-6 md:grid-cols-[220px_1fr]">
         <aside>
           {error ? (
-            <div className="rounded bg-red-50 p-3 text-sm text-red-700" role="alert">
+            <div className="rounded-lg bg-danger/10 p-3 text-sm text-danger" role="alert">
               {error} — is the backend running at {API_BASE}?
             </div>
           ) : (

@@ -1,8 +1,8 @@
 import type { SweepPoint } from "../api";
 
 const W = 420, H = 260, M = { t: 12, r: 12, b: 40, l: 44 };
-const ATTACKED = "#6366f1"; // indigo-500
-const DEFENDED = "#10b981"; // emerald-500
+const ATTACKED = "var(--chart-attacked)";
+const DEFENDED = "var(--chart-defended)";
 
 interface SweepChartProps {
   points: SweepPoint[];
@@ -29,15 +29,15 @@ export function SweepChart({ points, xLabel, yLabel, defendedLabel }: SweepChart
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={`${yLabel} vs ${xLabel}`}>
       {/* axes */}
-      <line x1={M.l} y1={M.t} x2={M.l} y2={H - M.b} stroke="#cbd5e1" />
-      <line x1={M.l} y1={H - M.b} x2={W - M.r} y2={H - M.b} stroke="#cbd5e1" />
+      <line x1={M.l} y1={M.t} x2={M.l} y2={H - M.b} stroke="var(--border)" />
+      <line x1={M.l} y1={H - M.b} x2={W - M.r} y2={H - M.b} stroke="var(--border)" />
       {/* y ticks at 0/0.5/1 */}
       {[0, 0.5, 1].map((t) => (
         <g key={t}>
-          <text x={M.l - 6} y={py(t) + 4} textAnchor="end" className="fill-slate-500 text-[10px]">
+          <text x={M.l - 6} y={py(t) + 4} textAnchor="end" className="fill-[var(--ink-subtle)] text-[10px]">
             {t}
           </text>
-          <line x1={M.l} y1={py(t)} x2={W - M.r} y2={py(t)} stroke="#f1f5f9" />
+          <line x1={M.l} y1={py(t)} x2={W - M.r} y2={py(t)} stroke="var(--surface-2)" />
         </g>
       ))}
       {/* series */}
@@ -56,10 +56,10 @@ export function SweepChart({ points, xLabel, yLabel, defendedLabel }: SweepChart
         </g>
       ))}
       {/* axis labels */}
-      <text x={(W + M.l) / 2} y={H - 6} textAnchor="middle" className="fill-slate-600 text-[11px]">
+      <text x={(W + M.l) / 2} y={H - 6} textAnchor="middle" className="fill-[var(--ink-muted)] text-[11px]">
         {xLabel}
       </text>
-      <text x={12} y={H / 2} textAnchor="middle" transform={`rotate(-90 12 ${H / 2})`} className="fill-slate-600 text-[11px]">
+      <text x={12} y={H / 2} textAnchor="middle" transform={`rotate(-90 12 ${H / 2})`} className="fill-[var(--ink-muted)] text-[11px]">
         {yLabel}
       </text>
     </svg>

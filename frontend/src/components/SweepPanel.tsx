@@ -50,20 +50,20 @@ export function SweepPanel({ attackId, spec, params }: SweepPanelProps) {
         <button
           onClick={runSweep}
           disabled={running}
-          className="rounded bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
+          className="rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-on-primary transition hover:bg-primary-strong disabled:opacity-50"
         >
           {running ? "Sweeping…" : "Run sweep"}
         </button>
-        <span className="text-sm text-slate-500 tabular-nums">{done} / {total}</span>
+        <span className="text-sm text-ink-muted tabular-nums">{done} / {total}</span>
       </div>
-      <div className="flex gap-4 text-xs text-slate-600">
+      <div className="flex gap-4 text-xs text-ink-muted">
         <span className="flex items-center gap-1">
-          <span className="inline-block h-2 w-3 rounded-sm" style={{ background: "#6366f1" }} />
+          <span className="inline-block h-2 w-3 rounded-sm" style={{ background: "var(--chart-attacked)" }} />
           {spec.attacked_metric} (attacked)
         </span>
         {spec.defended_metric && (
           <span className="flex items-center gap-1">
-            <span className="inline-block h-2 w-3 rounded-sm" style={{ background: "#10b981" }} />
+            <span className="inline-block h-2 w-3 rounded-sm" style={{ background: "var(--chart-defended)" }} />
             {spec.defended_metric} (defended)
           </span>
         )}
@@ -75,8 +75,8 @@ export function SweepPanel({ attackId, spec, params }: SweepPanelProps) {
         attackedLabel={spec.attacked_metric}
         defendedLabel={spec.defended_metric}
       />
-      {error && <div className="rounded bg-red-50 p-2 text-sm text-red-700" role="alert">{error}</div>}
-      <p className="text-xs text-slate-400">Sweeps <code>{spec.x_knob}</code> across {total} values; other knobs use their current values.</p>
+      {error && <div className="rounded-lg bg-danger/10 p-2 text-sm text-danger" role="alert">{error}</div>}
+      <p className="text-xs text-ink-subtle">Sweeps <code>{spec.x_knob}</code> across {total} values; other knobs use their current values.</p>
     </div>
   );
 }

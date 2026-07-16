@@ -41,17 +41,17 @@ export function AttackView({ attackId }: { attackId: string }) {
   }, [attackId, reset]);
 
   if (descError) {
-    return <div className="rounded bg-red-50 p-4 text-red-700" role="alert">{descError} — is the backend running at {API_BASE}?</div>;
+    return <div className="rounded-lg bg-danger/10 p-4 text-danger" role="alert">{descError} — is the backend running at {API_BASE}?</div>;
   }
   if (!description) {
-    return <div className="p-8 text-slate-400">Loading…</div>;
+    return <div className="p-8 text-ink-subtle">Loading…</div>;
   }
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
       <div className="flex flex-col gap-6">
         <div>
-          <div role="tablist" className="mb-3 flex gap-2 border-b border-slate-200">
+          <div role="tablist" className="mb-3 flex gap-2 border-b border-border">
             {([
               ["lesson", "Lesson"],
               ["code", "Code"],
@@ -62,10 +62,8 @@ export function AttackView({ attackId }: { attackId: string }) {
                 role="tab"
                 aria-selected={tab === t}
                 onClick={() => setTab(t)}
-                className={`-mb-px border-b-2 px-3 py-1.5 text-sm font-medium ${
-                  tab === t
-                    ? "border-indigo-600 text-indigo-700"
-                    : "border-transparent text-slate-500 hover:text-slate-700"
+                className={`-mb-px border-b-2 px-3 py-1.5 text-sm font-medium transition ${
+                  tab === t ? "border-primary text-primary" : "border-transparent text-ink-muted hover:text-ink"
                 }`}
               >
                 {label}

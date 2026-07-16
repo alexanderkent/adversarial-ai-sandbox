@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from ..registry import register_attack
 from ..base import AttackModule
-from ..schema import Knob, AttackDescription, RunResult, Figure, Metric
+from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec
 from ..adapters import mnist
 from ..adapters.attacks_torch import fgsm, pgd
 from ..source import snippet
@@ -45,6 +45,14 @@ class PerturbationAttack(AttackModule):
                      min=1, max=20, step=1, default=10,
                      help="Iterations (only used when Attack = pgd)."),
             ],
+            sweep=SweepSpec(
+                x_knob="epsilon",
+                x_values=[0.0, 0.05, 0.1, 0.15, 0.2, 0.3],
+                x_label="Epsilon (L-inf budget)",
+                y_label="True-class confidence under attack",
+                attacked_metric="Adversarial confidence",
+                defended_metric="Adversarial confidence",
+            ),
         )
 
     def _attack(self, model, x, y, p):

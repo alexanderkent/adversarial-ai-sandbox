@@ -1,5 +1,8 @@
+import json
+
 from fastapi import FastAPI, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from . import attacks  # noqa: F401  (import registers all modules)
 from .registry import list_attacks, get_attack
 from .schema import AttackDescription, RunResult
@@ -52,3 +55,20 @@ def run(attack_id: str, params: dict = Body(default={})):
 @app.post("/attacks/{attack_id}/defend", response_model=RunResult)
 def defend(attack_id: str, params: dict = Body(default={})):
     return _invoke("defend", attack_id, params)
+
+
+@app.post("/attacks/{attack_id}/sweep")
+def sweep(attack_id: str, params: dict = Body(default={})):
+    module = _module_or_404(attack_id)
+    if module.describe().sweep is None:
+        raise HTTPException(status_code=404, detail=f"{attack_id!r} has no sweep")
+
+    def gen():
+        try:
+            for point in module.sweep(params):
+                yield json.dumps(point) + "\n"
+        except ValueError as e:
+            yield json.dumps({"error": str(e)}) + "\n"
+        yield json.dumps({"done": True}) + "\n"
+
+    return StreamingResponse(gen(), media_type="application/x-ndjson")

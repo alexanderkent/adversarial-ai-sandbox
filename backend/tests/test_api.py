@@ -1,7 +1,13 @@
+import json
+
 from fastapi.testclient import TestClient
 from adversarial_sandbox.api import app
 
 client = TestClient(app)
+
+
+def _read_ndjson(resp):
+    return [json.loads(line) for line in resp.text.splitlines() if line.strip()]
 
 
 def test_list_attacks_includes_both_modules():
@@ -44,3 +50,28 @@ def test_missing_checkpoint_is_503(monkeypatch):
         json={"sample_index": 0, "epsilon": 0.1, "mode": "fgsm"},
     )
     assert r.status_code == 503
+
+
+def test_sweep_poisoning_streams_points_and_done():
+    r = client.post("/attacks/poisoning/sweep",
+                    json={"dataset": "blobs", "seed": 0})
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("application/x-ndjson")
+    lines = _read_ndjson(r)
+    assert lines[-1] == {"done": True}
+    points = [l for l in lines if "x" in l]
+    assert len(points) == 5  # n_poison sweep has 5 x-values
+    assert all("attacked" in p and "defended" in p for p in points)
+
+
+def test_sweep_unknown_attack_is_404():
+    assert client.post("/attacks/nope/sweep", json={}).status_code == 404
+
+
+def test_sweep_module_without_spec_is_404(monkeypatch):
+    from adversarial_sandbox.registry import get_attack
+    mod = get_attack("poisoning")
+    orig = type(mod).describe
+    monkeypatch.setattr(type(mod), "describe",
+                        lambda self: orig(self).model_copy(update={"sweep": None}))
+    assert client.post("/attacks/poisoning/sweep", json={}).status_code == 404

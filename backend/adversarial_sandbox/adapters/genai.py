@@ -2,8 +2,8 @@ from pathlib import Path
 import torch
 
 MODELS_DIR = Path(__file__).resolve().parents[2] / "models"
-LLM_DIR = MODELS_DIR / "qwen2.5-0.5b-instruct"
-MODEL_ID = "Qwen/Qwen2.5-0.5B-Instruct"
+LLM_DIR = MODELS_DIR / "qwen2.5-1.5b-instruct"
+MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 MAX_NEW_TOKENS = 96
 
 _cache: dict = {}
@@ -18,7 +18,7 @@ def _load():
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
         tok = AutoTokenizer.from_pretrained(str(LLM_DIR))
-        model = AutoModelForCausalLM.from_pretrained(str(LLM_DIR), torch_dtype=torch.float32)
+        model = AutoModelForCausalLM.from_pretrained(str(LLM_DIR), dtype=torch.float32)
         model.eval()
         _cache["tok"], _cache["model"] = tok, model
     return _cache["tok"], _cache["model"]

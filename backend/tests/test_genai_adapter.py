@@ -12,5 +12,5 @@ def test_generate_missing_weights_raises_helpful_error(monkeypatch, tmp_path):
 
 
 def test_constants_are_set():
-    assert genai.MODEL_ID == "Qwen/Qwen2.5-0.5B-Instruct"
+    assert genai.MODEL_ID == "Qwen/Qwen2.5-1.5B-Instruct"
     assert genai.MAX_NEW_TOKENS == 96

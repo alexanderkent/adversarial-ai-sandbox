@@ -71,12 +71,42 @@ class Metric(BaseModel):
     display: str
 
 
+class DecisionDomain(BaseModel):
+    x_min: float
+    x_max: float
+    y_min: float
+    y_max: float
+
+
+class DecisionPoint(BaseModel):
+    x: float
+    y: float
+    label: int
+    poison: bool = False
+
+
+class DecisionState(BaseModel):
+    title: str
+    domain: DecisionDomain
+    grid: list[list[int]]
+    resolution: int
+    points: list[DecisionPoint]
+    accuracy: float
+
+
+class DecisionSurface(BaseModel):
+    kind: Literal["decision_surface"] = "decision_surface"
+    states: list[DecisionState]
+    caption: str = ""
+
+
 class RunResult(BaseModel):
     figure: Figure | None = None
     metrics: list[Metric]
     narrative: str
     transcript: Transcript | None = None
     text_comparison: TextComparison | None = None
+    decision_surface: DecisionSurface | None = None
 
 
 class AtlasSubtechnique(BaseModel):

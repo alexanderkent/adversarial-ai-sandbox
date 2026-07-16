@@ -2,10 +2,11 @@ import re
 from ..registry import register_attack
 from ..base import AttackModule
 from ..schema import (
-    Knob, AttackDescription, RunResult, Metric, Transcript, TranscriptTurn,
+    Knob, AttackDescription, RunResult, Metric, Transcript, TranscriptTurn, AtlasSubtechnique,
 )
 from ..adapters import genai
 from ..source import snippet
+from ..atlas import technique
 
 # Task-hijack scenario: the model has a benign job (summarize text). A successful
 # injection makes it abandon that job and emit an attacker-chosen SENTINEL instead.
@@ -77,6 +78,13 @@ class PromptInjection(AttackModule):
                      options=list(PAYLOADS), default="override",
                      help="Which injection phrasing to attempt."),
             ],
+            atlas=[technique(
+                "AML.T0051", "LLM Prompt Injection", "Execution",
+                subtechniques=[
+                    AtlasSubtechnique(id="AML.T0051.000", name="Direct"),
+                    AtlasSubtechnique(id="AML.T0051.001", name="Indirect"),
+                ],
+            )],
         )
 
     def _build(self, vector, payload_text, defended):

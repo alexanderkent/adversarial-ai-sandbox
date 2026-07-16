@@ -6,6 +6,7 @@ from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSp
 from ..adapters import mnist
 from ..adapters.attacks_torch import cw_l2_targeted
 from ..source import snippet
+from ..atlas import technique
 
 
 def _target_conf(model, x, target_label):
@@ -56,6 +57,10 @@ class CarliniWagnerAttack(AttackModule):
                 attacked_metric="Target-class confidence (adversarial)",
                 defended_metric="Target-class confidence (adversarial)",
             ),
+            atlas=[
+                technique("AML.T0015", "Evade AI Model", "Defense Evasion"),
+                technique("AML.T0043", "Craft Adversarial Data", "AI Attack Staging"),
+            ],
         )
 
     def _evaluate(self, model_path, p):

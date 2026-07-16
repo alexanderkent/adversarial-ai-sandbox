@@ -6,6 +6,7 @@ from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSp
 from ..adapters import mnist
 from ..adapters.attacks_torch import fgsm, pgd
 from ..source import snippet
+from ..atlas import technique
 
 
 def _true_class_conf(model, x, true_label):
@@ -53,6 +54,10 @@ class PerturbationAttack(AttackModule):
                 attacked_metric="Adversarial confidence",
                 defended_metric="Adversarial confidence",
             ),
+            atlas=[
+                technique("AML.T0015", "Evade AI Model", "Defense Evasion"),
+                technique("AML.T0043", "Craft Adversarial Data", "AI Attack Staging"),
+            ],
         )
 
     def _attack(self, model, x, y, p):

@@ -45,12 +45,49 @@ export interface AttackDescription extends AttackSummary {
   has_defense: boolean;
   code?: CodeSnippet[];
   sweep?: SweepSpec | null;
+  atlas?: AtlasTechnique[];
 }
 
 export interface CodeSnippet {
   label: string;
   language: string;
   source: string;
+}
+
+export interface AtlasSubtechnique {
+  id: string;
+  name: string;
+}
+
+export interface AtlasTechnique {
+  id: string;
+  name: string;
+  tactic: string;
+  url: string;
+  subtechniques?: AtlasSubtechnique[];
+}
+
+export interface AtlasAttackRef {
+  attack_id: string;
+  attack_name: string;
+}
+
+export interface AtlasCell {
+  id: string;
+  name: string;
+  url: string;
+  covered: boolean;
+  subtechniques?: AtlasSubtechnique[];
+  attacks: AtlasAttackRef[];
+}
+
+export interface AtlasColumn {
+  tactic: string;
+  cells: AtlasCell[];
+}
+
+export interface AtlasMatrix {
+  tactics: AtlasColumn[];
 }
 
 export interface Figure {
@@ -142,6 +179,10 @@ export async function listAttacks(): Promise<AttackSummary[]> {
 
 export async function getAttack(id: string): Promise<AttackDescription> {
   return toJson(await fetch(`${API_BASE}/attacks/${id}`));
+}
+
+export async function listAtlas(): Promise<AtlasMatrix> {
+  return toJson(await fetch(`${API_BASE}/atlas`));
 }
 
 export async function runAttack(id: string, params: Params): Promise<RunResult> {

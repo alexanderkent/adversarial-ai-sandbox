@@ -7,7 +7,7 @@ import { ControlPanel } from "./ControlPanel";
 import { ArtifactPanel } from "./ArtifactPanel";
 import { SweepPanel } from "./SweepPanel";
 
-export function AttackView({ attackId }: { attackId: string }) {
+export function AttackView({ attackId, onShowTechnique }: { attackId: string; onShowTechnique?: (techniqueId: string) => void }) {
   const [description, setDescription] = useState<AttackDescription | null>(null);
   const [params, setParams] = useState<Params>({});
   const [defenseOn, setDefenseOn] = useState(false);
@@ -70,7 +70,7 @@ export function AttackView({ attackId }: { attackId: string }) {
               </button>
             ))}
           </div>
-          {tab === "lesson" && <LessonPanel description={description} />}
+          {tab === "lesson" && <LessonPanel description={description} onShowTechnique={onShowTechnique} />}
           {tab === "code" && <CodePanel code={description.code ?? []} />}
           {tab === "sweep" && description.sweep && (
             <SweepPanel attackId={attackId} spec={description.sweep} params={params} />

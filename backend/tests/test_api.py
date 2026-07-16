@@ -75,3 +75,14 @@ def test_sweep_module_without_spec_is_404(monkeypatch):
     monkeypatch.setattr(type(mod), "describe",
                         lambda self: orig(self).model_copy(update={"sweep": None}))
     assert client.post("/attacks/poisoning/sweep", json={}).status_code == 404
+
+
+def test_atlas_endpoint_returns_matrix():
+    r = client.get("/atlas")
+    assert r.status_code == 200
+    body = r.json()
+    tactics = [c["tactic"] for c in body["tactics"]]
+    assert "Defense Evasion" in tactics
+    cells = {cell["id"]: cell for col in body["tactics"] for cell in col["cells"]}
+    assert cells["AML.T0051"]["covered"] is True
+    assert {a["attack_id"] for a in cells["AML.T0051"]["attacks"]} == {"prompt_injection"}

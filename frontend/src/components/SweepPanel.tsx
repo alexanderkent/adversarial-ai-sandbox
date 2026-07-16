@@ -15,11 +15,15 @@ export function SweepPanel({ attackId, spec, params }: SweepPanelProps) {
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => () => abortRef.current?.abort(), []);
-  // reset when the target attack changes
-  useEffect(() => { setPoints([]); setError(null); }, [attackId]);
+  // abort any in-flight sweep and reset when the target attack changes
+  useEffect(() => {
+    abortRef.current?.abort();
+    setPoints([]);
+    setError(null);
+  }, [attackId]);
 
   const total = spec.x_values.length;
-  const done = points.filter((p) => typeof p.x === "number").length;
+  const done = points.length;
 
   async function runSweep() {
     abortRef.current?.abort();

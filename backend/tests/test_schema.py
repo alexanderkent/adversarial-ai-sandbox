@@ -129,3 +129,35 @@ def test_atlas_matrix_model_builds():
                      attacks=[AtlasAttackRef(attack_id="prompt_injection", attack_name="Prompt Injection")])
     m = AtlasMatrix(tactics=[AtlasColumn(tactic="Defense Evasion", cells=[cell])])
     assert m.tactics[0].cells[0].attacks[0].attack_id == "prompt_injection"
+
+
+from adversarial_sandbox.schema import (
+    DecisionSurface, DecisionState, DecisionDomain, DecisionPoint, RunResult, Metric,
+)
+
+
+def test_decision_surface_round_trips():
+    dom = DecisionDomain(x_min=-3, x_max=3, y_min=-3, y_max=3)
+    state = DecisionState(
+        title="Clean model", domain=dom, resolution=2, grid=[[0, 1], [0, 1]],
+        points=[DecisionPoint(x=-2, y=-2, label=0),
+                DecisionPoint(x=1, y=1, label=1, poison=True)],
+        accuracy=0.9,
+    )
+    surface = DecisionSurface(states=[state, state], caption="c")
+    assert surface.kind == "decision_surface"
+    assert surface.states[0].grid == [[0, 1], [0, 1]]
+    assert surface.states[0].points[1].poison is True
+    assert surface.states[0].points[0].poison is False
+
+
+def test_run_result_accepts_decision_surface():
+    dom = DecisionDomain(x_min=0, x_max=1, y_min=0, y_max=1)
+    r = RunResult(
+        decision_surface=DecisionSurface(states=[DecisionState(
+            title="s", domain=dom, resolution=1, grid=[[0]], points=[], accuracy=1.0)]),
+        metrics=[Metric(label="Clean accuracy", value=1.0, display="100%")],
+        narrative="n",
+    )
+    assert r.figure is None
+    assert r.decision_surface.states[0].title == "s"

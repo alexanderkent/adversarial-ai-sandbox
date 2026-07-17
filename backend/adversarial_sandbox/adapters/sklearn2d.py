@@ -7,6 +7,8 @@ import numpy as np
 from sklearn.datasets import make_moons, make_blobs
 from sklearn.svm import SVC
 
+from ..schema import DecisionDomain
+
 
 def make_dataset(kind: str, n_samples: int = 200, noise: float = 0.2, seed: int = 0):
     if kind == "moons":
@@ -28,6 +30,21 @@ def train(X, y, C: float = 1.0):
 
 def accuracy(clf, X, y) -> float:
     return float((clf.predict(X) == y).mean())
+
+
+def decision_domain(X, pad: float = 0.5) -> DecisionDomain:
+    return DecisionDomain(
+        x_min=float(X[:, 0].min() - pad), x_max=float(X[:, 0].max() + pad),
+        y_min=float(X[:, 1].min() - pad), y_max=float(X[:, 1].max() + pad),
+    )
+
+
+def decision_grid(clf, domain: DecisionDomain, res: int) -> list[list[int]]:
+    xs = np.linspace(domain.x_min, domain.x_max, res)
+    ys = np.linspace(domain.y_max, domain.y_min, res)  # row 0 = top (max y)
+    xx, yy = np.meshgrid(xs, ys)
+    Z = clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(res, res)
+    return Z.astype(int).tolist()
 
 
 def _fig_to_base64(fig) -> str:

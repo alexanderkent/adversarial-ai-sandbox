@@ -41,8 +41,10 @@ class PerturbationAttack(AttackModule):
                 FlowStep(title="Model misclassifies", detail="f(x′) ≠ y — the attack succeeds.", actor="outcome"),
             ],
             knobs=[
-                Knob(name="sample_index", label="Digit sample", type="slider",
-                     min=0, max=9, step=1, default=0, help="Which held-out digit."),
+                Knob(name="sample_index", label="Test image", type="slider",
+                     min=0, max=9, step=1, default=0,
+                     help="Which held-out test image to perturb (index 0-9 into the "
+                          "test set, not the digit value)."),
                 Knob(name="epsilon", label="Epsilon (L-inf budget)", type="slider",
                      min=0.0, max=0.3, step=0.01, default=0.15,
                      help="Perturbation size; larger = stronger but more visible."),

@@ -43,8 +43,10 @@ class CarliniWagnerAttack(AttackModule):
                 FlowStep(title="Predicts the target class", detail="A confident, targeted misclassification.", actor="outcome"),
             ],
             knobs=[
-                Knob(name="sample_index", label="Digit sample", type="slider",
-                     min=0, max=9, step=1, default=0, help="Which held-out digit to perturb."),
+                Knob(name="sample_index", label="Test image", type="slider",
+                     min=0, max=9, step=1, default=0,
+                     help="Which held-out test image to perturb (index 0-9 into the "
+                          "test set, not the digit value)."),
                 Knob(name="target", label="Target digit", type="select",
                      options=[str(d) for d in range(10)], default="8",
                      help="The class the attacker forces the model to predict."),

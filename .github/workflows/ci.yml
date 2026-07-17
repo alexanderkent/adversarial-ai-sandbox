@@ -1,0 +1,65 @@
+name: CI
+
+# Runs on merges landing on main (a push to main) and on demand via the
+# "Run workflow" button — deliberately NOT on every feature-branch commit.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/pyproject.toml
+
+      - name: Install dependencies (CPU-only torch)
+        run: |
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install -e ".[dev]"
+
+      # Trained MNIST checkpoints are reused across runs; they only need
+      # regenerating when the model or training code changes.
+      - name: Cache MNIST checkpoints
+        id: models
+        uses: actions/cache@v4
+        with:
+          path: backend/models
+          key: mnist-${{ hashFiles('backend/scripts/train_mnist.py', 'backend/adversarial_sandbox/adapters/mnist.py', 'backend/adversarial_sandbox/adapters/attacks_torch.py') }}
+
+      - name: Train MNIST checkpoints
+        if: steps.models.outputs.cache-hit != 'true'
+        run: python scripts/train_mnist.py
+
+      # ~126 pass, 1 skip: the GenAI contract case self-skips (the local LLM
+      # is intentionally not downloaded in CI; its unit tests are monkeypatched).
+      - name: Run tests
+        run: python -m pytest -q

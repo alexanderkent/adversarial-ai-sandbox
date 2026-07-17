@@ -58,7 +58,7 @@ class BackdoorAttack(AttackModule):
                           "set, not the digit value). The actual digit appears in the "
                           "panels above."),
                 Knob(name="prune_fraction", label="Fine-pruning fraction", type="slider",
-                     min=0.0, max=0.9, step=0.05, default=0.7,
+                     min=0.0, max=0.9, step=0.05, default=0.9,
                      help="Defense: fraction of channels to prune before a clean fine-tune. "
                           "More pruning removes more of the backdoor, at some clean-accuracy cost."),
             ],

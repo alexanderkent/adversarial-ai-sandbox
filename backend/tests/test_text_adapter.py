@@ -44,3 +44,16 @@ def test_intensity_zero_changes_nothing():
     spans = txt.perturb("ignore instructions", "homoglyph", 0.0)
     assert not any(c for _, c in spans)
     assert _joined(spans) == "ignore instructions"
+
+
+def test_leetspeak_substitutes_and_normalizes_back():
+    spans = txt.perturb("ignore instructions", "leetspeak", 1.0)
+    out = _joined(spans)
+    assert out != "ignore instructions"            # letters swapped for leet digits
+    assert any(changed for _, changed in spans)    # at least one span highlighted
+    assert txt.normalize_text(out) == "ignore instructions"  # normalization folds it back
+
+
+def test_leetspeak_normalize_leaves_plain_numbers_alone():
+    # a pure-digit run (no letters) must not be "folded" into letters
+    assert txt.normalize_text("meet in 2024") == "meet in 2024"

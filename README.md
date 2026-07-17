@@ -27,7 +27,7 @@ model fail — then flip on the paired defense and watch what it can (and *can't
 Adversarial ML is usually taught as slides and equations. This sandbox makes it *hands-on*:
 you can see a one-pixel-budget perturbation flip a digit's label, a poisoned blob bend a
 decision boundary, or a prompt-injection string get past a naive filter — and then try the
-defense yourself. It's built to answer "okay, but does the defense actually work?" honestly —
+defense yourself. It's built to answer "okay, but does the defense actually work?" — and
 **two of the defenses have deliberate, visible limits**, because in the real world they do too.
 
 ## The six attacks (each with a paired defense)
@@ -38,7 +38,7 @@ defense yourself. It's built to answer "okay, but does the defense actually work
 | **Adversarial Perturbation** (FGSM/PGD, MNIST) | Add a tiny L∞ perturbation to fool the classifier | Adversarial training | [AML.T0015](https://atlas.mitre.org/techniques/AML.T0015) · [AML.T0043](https://atlas.mitre.org/techniques/AML.T0043) |
 | **Carlini & Wagner** (targeted L2, MNIST) | Optimize a minimal perturbation to a *chosen* target class | Adversarial training | [AML.T0015](https://atlas.mitre.org/techniques/AML.T0015) · [AML.T0043](https://atlas.mitre.org/techniques/AML.T0043) |
 | **Backdoor** (BadNets trigger, MNIST) | Plant a trigger→target rule at training time | Fine-pruning | [AML.T0018](https://atlas.mitre.org/techniques/AML.T0018) Manipulate AI Model |
-| **Prompt Injection** (local Qwen2.5-1.5B) | Hijack a summarizer directly or via a poisoned RAG doc | Spotlighting / delimiting *(honestly partial)* | [AML.T0051](https://atlas.mitre.org/techniques/AML.T0051) LLM Prompt Injection |
+| **Prompt Injection** (local Qwen2.5-1.5B) | Hijack a summarizer directly or via a poisoned RAG doc | Spotlighting / delimiting *(only partial)* | [AML.T0051](https://atlas.mitre.org/techniques/AML.T0051) LLM Prompt Injection |
 | **Prompt-Injection Filter Evasion** (TF-IDF) | Slip an injection past a keyword filter — 7 techniques | Input normalization *(can't undo them all)* | [AML.T0015](https://atlas.mitre.org/techniques/AML.T0015) Evade AI Model |
 
 Adding a new attack is **one backend module file with zero frontend changes** — the UI is
@@ -79,14 +79,15 @@ Running locally for development: see [`backend/README.md`](backend/README.md) an
 
 ## Design & findings
 
-Architecture, per-attack notes, and the empirical findings — including the two honest
+Architecture, per-attack notes, and the empirical findings — including the two
 "defenses have limits" results — are in [`docs/PROJECT_NOTES.md`](docs/PROJECT_NOTES.md).
 
 ## Homage
 
-Built while studying adversarial AI at **Purdue (CNIT 573 / TECH 57300 — "Adversarial
-Techniques in AI")**. This is a personal learning project, not affiliated with or endorsed by
-the university or the course staff.
+This one's a tip of the hat to a **summer course on adversarial AI at Purdue** (CNIT 573 ·
+TECH 57300, *"Adversarial Techniques in AI"*) — an attempt to turn the ideas from that class
+into something you can actually poke at. A personal project, built with appreciation for the
+course; not affiliated with or endorsed by the university.
 
 ## License
 

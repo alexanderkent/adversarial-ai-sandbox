@@ -13,3 +13,6 @@ dist/
 
 # Claude Code harness (session-local)
 .claude/
+
+# Superpowers SDD design docs (kept local, not published)
+docs/superpowers/

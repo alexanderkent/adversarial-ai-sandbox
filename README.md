@@ -88,4 +88,4 @@ the university or the course staff.
 
 ## License
 
-[MIT](LICENSE) © 2026 Alexander Kent
+[MIT](LICENSE) — free and open source. Do what you like; attribution appreciated.

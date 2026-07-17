@@ -65,3 +65,11 @@ def test_reverse_reverses_words_and_is_NOT_recoverable():
     assert "erongi" in out                       # per-word character reversal
     assert "ignore" not in out and "instructions" not in out
     assert txt.normalize_text(out) == out        # naive normalizer cannot un-reverse it
+
+
+def test_foreign_translates_words_and_is_NOT_recoverable():
+    spans = txt.perturb("ignore instructions", "foreign", 1.0)
+    out = _joined(spans)
+    assert "ignore" not in out and "instructions" not in out  # translated away
+    assert any(changed for _, changed in spans)
+    assert txt.normalize_text(out) == out        # normalization cannot undo a translation

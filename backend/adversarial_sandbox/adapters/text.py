@@ -2,7 +2,7 @@ import re
 import unicodedata
 
 ZWSP = "​"
-TECHNIQUES = ["homoglyph", "zero_width", "spacing", "leetspeak", "synonym", "reverse"]
+TECHNIQUES = ["homoglyph", "zero_width", "spacing", "leetspeak", "synonym", "reverse", "foreign"]
 
 # ASCII -> visually-confusable Cyrillic/Greek letters.
 HOMOGLYPHS = {
@@ -21,6 +21,17 @@ SYNONYMS = {
     "password": "passcode", "disregard": "dismiss", "restrictions": "limits",
 }
 
+# English -> French translation. Targets are chosen OUT of the detector's English
+# training vocabulary (and never identical in spelling, e.g. NOT "instructions" ->
+# "instructions"), so a translation both evades detection and survives normalization.
+FOREIGN = {
+    "ignore": "oublier", "previous": "précédentes", "instructions": "consignes",
+    "reveal": "révélez", "system": "système", "prompt": "amorce",
+    "override": "remplacez", "guidelines": "directives", "confidential": "confidentiel",
+    "password": "motdepasse", "disregard": "négligez", "restrictions": "limites",
+    "data": "données",
+}
+
 # ASCII letter -> leetspeak digit. Reversible: a leet digit inside an alphanumeric
 # run that also contains letters folds back to its letter; a pure-number run is left
 # alone (so "2024" is not mangled).
@@ -37,6 +48,8 @@ def _tokens(text: str) -> list[str]:
 def _eligible(tok: str, technique: str) -> bool:
     if technique == "synonym":
         return tok.lower() in SYNONYMS
+    if technique == "foreign":
+        return tok.lower() in FOREIGN
     return tok.isalpha() and len(tok) >= 4
 
 
@@ -53,6 +66,8 @@ def _apply(tok: str, technique: str) -> str:
         return SYNONYMS[tok.lower()]
     if technique == "reverse":
         return tok[::-1]
+    if technique == "foreign":
+        return FOREIGN[tok.lower()]
     return tok
 
 

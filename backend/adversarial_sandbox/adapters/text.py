@@ -2,7 +2,7 @@ import re
 import unicodedata
 
 ZWSP = "​"
-TECHNIQUES = ["homoglyph", "zero_width", "spacing", "leetspeak", "synonym"]
+TECHNIQUES = ["homoglyph", "zero_width", "spacing", "leetspeak", "synonym", "reverse"]
 
 # ASCII -> visually-confusable Cyrillic/Greek letters.
 HOMOGLYPHS = {
@@ -51,6 +51,8 @@ def _apply(tok: str, technique: str) -> str:
         return "".join(LEET.get(c, c) for c in tok)
     if technique == "synonym":
         return SYNONYMS[tok.lower()]
+    if technique == "reverse":
+        return tok[::-1]
     return tok
 
 

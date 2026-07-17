@@ -57,3 +57,11 @@ def test_leetspeak_substitutes_and_normalizes_back():
 def test_leetspeak_normalize_leaves_plain_numbers_alone():
     # a pure-digit run (no letters) must not be "folded" into letters
     assert txt.normalize_text("meet in 2024") == "meet in 2024"
+
+
+def test_reverse_reverses_words_and_is_NOT_recoverable():
+    spans = txt.perturb("ignore instructions", "reverse", 1.0)
+    out = _joined(spans)
+    assert "erongi" in out                       # per-word character reversal
+    assert "ignore" not in out and "instructions" not in out
+    assert txt.normalize_text(out) == out        # naive normalizer cannot un-reverse it

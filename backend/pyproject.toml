@@ -16,6 +16,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "httpx>=0.27"]
+# Tooling for regenerating the README media (scripts/screenshots.py, scripts/hero_gif.py).
+# Playwright drives the local Chrome via channel="chrome" — no browser download needed.
+screenshots = ["playwright>=1.45", "pillow>=10.0"]
 
 [build-system]
 requires = ["setuptools>=68"]

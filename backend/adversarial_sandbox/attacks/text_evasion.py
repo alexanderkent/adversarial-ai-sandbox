@@ -114,8 +114,10 @@ class TextEvasion(AttackModule):
                 "A naive **text classifier** (TF-IDF + logistic regression) is trained to flag "
                 "**prompt-injection** attempts. Because it keys on word tokens like *ignore* and "
                 "*instructions*, small **meaning-preserving perturbations** — homoglyphs, "
-                "zero-width characters, spacing, or synonyms — slip the same attack right past it. "
-                "Input **normalization** folds most of these back, but cannot undo a synonym swap."
+                "zero-width characters, spacing, **leetspeak**, **word reversal**, **synonyms**, "
+                "or **foreign-language** swaps — slip the same attack right past it. Input "
+                "**normalization** folds the character tricks back, but cannot undo a synonym, "
+                "reversal, or translation."
             ),
             formula=r"\hat{p}(\text{injection}\mid x) \gg \hat{p}(\text{injection}\mid \tilde{x}), \quad \tilde{x}\approx x",
             threat_model="Attacker crafts text that reads the same to a human but tokenizes "
@@ -126,10 +128,10 @@ class TextEvasion(AttackModule):
             ],
             flow=[
                 FlowStep(title="An injection string", detail="e.g. 'ignore previous instructions…'.", actor="input"),
-                FlowStep(title="Meaning-preserving perturbation", detail="Homoglyph / zero-width / spacing / synonym.", actor="attacker"),
+                FlowStep(title="Meaning-preserving perturbation", detail="Homoglyph / zero-width / spacing / leetspeak / reverse / synonym / foreign.", actor="attacker"),
                 FlowStep(title="Detector re-tokenizes", detail="TF-IDF + logistic regression sees different tokens.", actor="model"),
                 FlowStep(title="Score drops, slips past", detail="The filter no longer flags it.", actor="outcome"),
-                FlowStep(title="Input normalization", detail="Folds char tricks back; cannot undo a synonym swap.", actor="defense"),
+                FlowStep(title="Input normalization", detail="Folds char tricks back; cannot undo a synonym, reversal, or translation.", actor="defense"),
             ],
             knobs=[
                 Knob(name="payload", label="Injection to smuggle", type="select",
@@ -137,7 +139,9 @@ class TextEvasion(AttackModule):
                      help="The injection string to disguise past the detector."),
                 Knob(name="technique", label="Perturbation", type="select",
                      options=txt.TECHNIQUES, default="homoglyph",
-                     help="homoglyph / zero-width / spacing break word tokens; synonym swaps them."),
+                     help="homoglyph / zero-width / spacing / leetspeak break word tokens "
+                          "(normalization folds them back); synonym / reverse / foreign change "
+                          "or restructure words (normalization cannot undo them)."),
                 Knob(name="intensity", label="Intensity", type="slider",
                      min=0.0, max=1.0, step=0.1, default=1.0,
                      help="Fraction of eligible words to perturb."),

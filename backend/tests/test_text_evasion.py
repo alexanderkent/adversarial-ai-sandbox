@@ -41,3 +41,19 @@ def test_transcript_spans_highlight_changes():
     r = m.run({"payload": P, "technique": "homoglyph", "intensity": 1.0})
     perturbed_variant = r.text_comparison.variants[1]
     assert any(s.changed for s in perturbed_variant.spans)
+
+
+def test_leetspeak_evades_and_normalization_restores():
+    r = m.run({"payload": P, "technique": "leetspeak", "intensity": 1.0})
+    assert r.metrics[0].value > 0.7          # original flagged
+    assert r.metrics[1].value < 0.4          # leetspeak evades
+    d = m.defend({"payload": P, "technique": "leetspeak", "intensity": 1.0})
+    assert d.metrics[1].value > d.metrics[0].value + 0.3  # normalization restores detection
+
+
+def test_reverse_and_foreign_survive_normalization():
+    for tech in ("reverse", "foreign"):
+        d = m.defend({"payload": P, "technique": tech, "intensity": 1.0})
+        pert, norm = d.metrics[0].value, d.metrics[1].value
+        assert pert < 0.5        # evaded the detector
+        assert norm == pert      # normalization changes nothing (honest limitation)

@@ -16,7 +16,9 @@ model fail — then flip on the paired defense and watch what it can (and *can't
 ![Attacks](https://img.shields.io/badge/attacks-6-8A2BE2)
 ![MITRE ATLAS](https://img.shields.io/badge/mapped%20to-MITRE%20ATLAS-red)
 
-<img src="docs/img/hero.png" alt="Adversarial AI Sandbox — Backdoor lesson with a live result" width="880">
+<img src="docs/img/hero.gif" alt="Adversarial AI Sandbox — plant a backdoor (100% attack success), then fine-prune the defense and watch it drop to 32%" width="880">
+
+<sub>Plant a BadNets backdoor → 100% attack success → apply the fine-pruning defense → the trigger drops to 32%.</sub>
 
 </div>
 

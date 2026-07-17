@@ -99,16 +99,16 @@ export function DecisionSurfaceView({ surface }: { surface: DecisionSurface }) {
         {hover != null && points[hover] && (
           <g data-testid="decision-tooltip" pointerEvents="none">
             <rect
-              x={Math.min(px(points[hover].x) + 6, W - 138)}
+              x={Math.min(px(points[hover].x) + 6, W - 174)}
               y={Math.max(py(points[hover].y) - 24, 2)}
-              width={132}
+              width={168}
               height={20}
               rx={4}
               fill="var(--surface)"
               stroke="var(--border)"
             />
             <text
-              x={Math.min(px(points[hover].x) + 12, W - 132)}
+              x={Math.min(px(points[hover].x) + 12, W - 168)}
               y={Math.max(py(points[hover].y) - 10, 16)}
               fontSize={9}
               fill="var(--ink)"

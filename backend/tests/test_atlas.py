@@ -41,6 +41,7 @@ def test_specific_mappings():
     assert ids("carlini_wagner") == {"AML.T0015", "AML.T0043"}
     assert ids("text_evasion") == {"AML.T0015"}
     assert ids("prompt_injection") == {"AML.T0051"}
+    assert ids("data_exfiltration") == {"AML.T0051", "AML.T0057"}
 
 
 def test_prompt_injection_has_subtechniques():

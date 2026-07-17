@@ -16,3 +16,6 @@ dist/
 
 # Superpowers SDD design docs (kept local, not published)
 docs/superpowers/
+
+# Launch notes (kept local, not published)
+docs/launch/

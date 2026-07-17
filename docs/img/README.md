@@ -1,8 +1,8 @@
 # Screenshots
 
-The top-level README references these images. Add them here before making the repo public
-(see `docs/launch/repo-checklist.md` §2 for the exact app states):
+The top-level README references these images:
 
+- `hero.gif` — the animated hero (plant a backdoor, then apply the defense).
 - `hero.png` — Backdoor lesson, light theme, after *Run attack* (digit triptych + metrics).
 - `dark.png` — same in dark theme, scrolled to the footer.
 - `atlas.png` — the MITRE ATLAS coverage matrix.

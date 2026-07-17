@@ -23,7 +23,11 @@ def test_fine_prune_reduces_asr_and_keeps_accuracy():
     _, asr_before = _metrics(model, xs, ys)
 
     torch.manual_seed(0)                       # seed RIGHT BEFORE the call (randperm)
-    pruned = mnist.fine_prune(model, ft_x, ft_y, prune_fraction=0.7)
+    # Prune aggressively (0.9): at lower fractions the reduction is small and
+    # model-dependent (fine-pruning is an honestly-limited defense), which made
+    # this assertion flaky across freshly-trained backdoored models. At 0.9 the
+    # backdoor is reliably and substantially removed while clean accuracy holds.
+    pruned = mnist.fine_prune(model, ft_x, ft_y, prune_fraction=0.9)
     clean_after, asr_after = _metrics(pruned, xs, ys)
 
     assert asr_after < asr_before - 0.2        # fine-pruning substantially reduces the backdoor

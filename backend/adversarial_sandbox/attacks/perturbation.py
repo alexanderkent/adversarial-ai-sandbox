@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from ..registry import register_attack
 from ..base import AttackModule
-from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec
+from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec, FlowStep
 from ..adapters import mnist
 from ..adapters.attacks_torch import fgsm, pgd
 from ..source import snippet
@@ -33,6 +33,13 @@ class PerturbationAttack(AttackModule):
             threat_model="Attacker has white-box access to gradients and can perturb "
                          "the test input within an L-inf budget epsilon.",
             code=[snippet(fgsm, "FGSM"), snippet(pgd, "PGD (iterated)")],
+            flow=[
+                FlowStep(title="Clean input", detail="A correctly-classified image x.", actor="input"),
+                FlowStep(title="Compute loss gradient", detail="White-box access to ∇ₓ L(f(x), y).", actor="attacker"),
+                FlowStep(title="Perturb along the sign", detail="x + ε·sign(∇ₓL), clipped to an L∞ budget ε.", actor="attacker"),
+                FlowStep(title="Adversarial x′", detail="Visually identical to x for a human.", actor="attacker"),
+                FlowStep(title="Model misclassifies", detail="f(x′) ≠ y — the attack succeeds.", actor="outcome"),
+            ],
             knobs=[
                 Knob(name="sample_index", label="Digit sample", type="slider",
                      min=0, max=9, step=1, default=0, help="Which held-out digit."),

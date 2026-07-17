@@ -4,7 +4,7 @@ from ..registry import register_attack
 from ..base import AttackModule
 from ..schema import (
     Knob, AttackDescription, RunResult, Metric, SweepSpec,
-    DecisionSurface, DecisionState, DecisionPoint,
+    DecisionSurface, DecisionState, DecisionPoint, FlowStep,
 )
 from ..adapters import sklearn2d as s2d
 from ..source import snippet
@@ -70,6 +70,13 @@ class PoisoningAttack(AttackModule):
             code=[
                 snippet(self._poison, "Injecting the poison"),
                 snippet(_super_majority_clean, "Super-majority cleaning (defense)"),
+            ],
+            flow=[
+                FlowStep(title="Attacker controls training data", detail="Supply-chain or annotation poisoning.", actor="attacker"),
+                FlowStep(title="Flip labels + inject poison blob", detail="Mislabeled points deep in the opposite class.", actor="attacker"),
+                FlowStep(title="Train on corrupted data", detail="A sensitive (high-C) classifier fits the poison.", actor="model"),
+                FlowStep(title="Boundary bends, accuracy drops", detail="Accuracy on the true data falls.", actor="outcome"),
+                FlowStep(title="Super-majority cleaning", detail="Removes points deep in enemy territory; boundary recovers.", actor="defense"),
             ],
             knobs=[
                 Knob(name="dataset", label="Dataset", type="select",

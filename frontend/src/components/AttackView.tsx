@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { API_BASE, getAttack, type AttackDescription, type Params } from "../api";
 import { useRun } from "../hooks/useRun";
 import { LessonPanel } from "./LessonPanel";
+import { FlowPanel } from "./FlowPanel";
 import { CodePanel } from "./CodePanel";
 import { ControlPanel } from "./ControlPanel";
 import { ArtifactPanel } from "./ArtifactPanel";
@@ -12,7 +13,7 @@ export function AttackView({ attackId, onShowTechnique }: { attackId: string; on
   const [params, setParams] = useState<Params>({});
   const [defenseOn, setDefenseOn] = useState(false);
   const [descError, setDescError] = useState<string | null>(null);
-  const [tab, setTab] = useState<"lesson" | "code" | "sweep">("lesson");
+  const [tab, setTab] = useState<"lesson" | "flow" | "code" | "sweep">("lesson");
   const { result, loading, error, execute, reset } = useRun(attackId);
 
   useEffect(() => {
@@ -54,6 +55,7 @@ export function AttackView({ attackId, onShowTechnique }: { attackId: string; on
           <div role="tablist" className="mb-3 flex gap-2 border-b border-border">
             {([
               ["lesson", "Lesson"],
+              ...(description.flow?.length ? [["flow", "Flow"] as const] : []),
               ["code", "Code"],
               ...(description.sweep ? [["sweep", "Sweep"] as const] : []),
             ] as const).map(([t, label]) => (
@@ -71,6 +73,7 @@ export function AttackView({ attackId, onShowTechnique }: { attackId: string; on
             ))}
           </div>
           {tab === "lesson" && <LessonPanel description={description} onShowTechnique={onShowTechnique} />}
+          {tab === "flow" && description.flow && <FlowPanel steps={description.flow} />}
           {tab === "code" && <CodePanel code={description.code ?? []} />}
           {tab === "sweep" && description.sweep && (
             <SweepPanel attackId={attackId} spec={description.sweep} params={params} />

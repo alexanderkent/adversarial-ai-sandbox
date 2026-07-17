@@ -1,4 +1,3 @@
-import re
 from adversarial_sandbox.registry import list_attacks, get_attack
 from adversarial_sandbox import attacks  # noqa: F401  (register modules)
 

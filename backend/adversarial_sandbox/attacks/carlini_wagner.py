@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from ..registry import register_attack
 from ..base import AttackModule
-from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec
+from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec, FlowStep
 from ..adapters import mnist
 from ..adapters.attacks_torch import cw_l2_targeted
 from ..source import snippet
@@ -35,6 +35,13 @@ class CarliniWagnerAttack(AttackModule):
             threat_model="White-box attacker optimizing an input to be classified as a "
                          "chosen target class while minimizing the L2 perturbation.",
             code=[snippet(cw_l2_targeted, "Carlini-Wagner L2")],
+            flow=[
+                FlowStep(title="Pick a target class", detail="The class the attacker wants x read as.", actor="input"),
+                FlowStep(title="Optimize a minimal perturbation", detail="Minimize ‖δ‖₂ s.t. f(x+δ)=target.", actor="attacker"),
+                FlowStep(title="Iterate to the boundary", detail="Gradient steps until misclassified as the target.", actor="attacker"),
+                FlowStep(title="Adversarial x′", detail="Tiny L2 distortion, imperceptible.", actor="attacker"),
+                FlowStep(title="Predicts the target class", detail="A confident, targeted misclassification.", actor="outcome"),
+            ],
             knobs=[
                 Knob(name="sample_index", label="Digit sample", type="slider",
                      min=0, max=9, step=1, default=0, help="Which held-out digit to perturb."),

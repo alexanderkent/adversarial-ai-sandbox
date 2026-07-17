@@ -80,3 +80,26 @@ test("hides the Sweep tab when the description has no sweep spec", async () => {
   await waitFor(() => screen.getByRole("heading", { name: "Data Poisoning" }));
   expect(screen.queryByRole("tab", { name: /sweep/i })).not.toBeInTheDocument();
 });
+
+const descWithFlow: api.AttackDescription = {
+  ...desc,
+  flow: [
+    { title: "Clean input", detail: "x", actor: "input" },
+    { title: "Model misclassifies", detail: "wrong", actor: "outcome" },
+  ],
+};
+
+test("shows a Flow tab and pipeline when the description has a flow", async () => {
+  vi.spyOn(api, "getAttack").mockResolvedValue(descWithFlow);
+  render(<AttackView attackId="poisoning" />);
+  await waitFor(() => screen.getByRole("heading", { name: "Data Poisoning" }));
+  fireEvent.click(screen.getByRole("tab", { name: "Flow" }));
+  expect(screen.getAllByTestId("flow-step")).toHaveLength(2);
+});
+
+test("hides the Flow tab when the description has no flow", async () => {
+  vi.spyOn(api, "getAttack").mockResolvedValue(desc);
+  render(<AttackView attackId="poisoning" />);
+  await waitFor(() => screen.getByRole("heading", { name: "Data Poisoning" }));
+  expect(screen.queryByRole("tab", { name: "Flow" })).not.toBeInTheDocument();
+});

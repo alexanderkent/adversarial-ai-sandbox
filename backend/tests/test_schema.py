@@ -161,3 +161,28 @@ def test_run_result_accepts_decision_surface():
     )
     assert r.figure is None
     assert r.decision_surface.states[0].title == "s"
+
+
+import pytest as _pytest
+from pydantic import ValidationError as _ValidationError
+from adversarial_sandbox.schema import FlowStep as _FlowStep, AttackDescription as _AD
+
+
+def test_flow_step_round_trips():
+    s = _FlowStep(title="Perturb", detail="x + eps*sign(grad)", actor="attacker")
+    assert s.actor == "attacker"
+
+
+def test_flow_step_rejects_unknown_actor():
+    with _pytest.raises(_ValidationError):
+        _FlowStep(title="t", detail="d", actor="wizard")
+
+
+def test_attack_description_flow_defaults_empty_and_accepts_steps():
+    d0 = _AD(id="x", name="X", group="G", summary="s", formula="f",
+             threat_model="t", knobs=[])
+    assert d0.flow == []
+    d1 = _AD(id="x", name="X", group="G", summary="s", formula="f",
+             threat_model="t", knobs=[],
+             flow=[_FlowStep(title="Clean input", detail="x", actor="input")])
+    assert d1.flow[0].actor == "input"

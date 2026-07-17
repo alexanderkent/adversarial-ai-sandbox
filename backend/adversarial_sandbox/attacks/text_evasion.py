@@ -4,6 +4,7 @@ from ..registry import register_attack
 from ..base import AttackModule
 from ..schema import (
     Knob, AttackDescription, RunResult, Metric, TextComparison, TextVariant, TextSpan,
+    FlowStep,
 )
 from ..adapters import text as txt
 from ..source import snippet
@@ -122,6 +123,13 @@ class TextEvasion(AttackModule):
             code=[
                 snippet(txt.perturb, "Text perturbations (attack)"),
                 snippet(txt.normalize_text, "Input normalization (defense)"),
+            ],
+            flow=[
+                FlowStep(title="An injection string", detail="e.g. 'ignore previous instructions…'.", actor="input"),
+                FlowStep(title="Meaning-preserving perturbation", detail="Homoglyph / zero-width / spacing / synonym.", actor="attacker"),
+                FlowStep(title="Detector re-tokenizes", detail="TF-IDF + logistic regression sees different tokens.", actor="model"),
+                FlowStep(title="Score drops, slips past", detail="The filter no longer flags it.", actor="outcome"),
+                FlowStep(title="Input normalization", detail="Folds char tricks back; cannot undo a synonym swap.", actor="defense"),
             ],
             knobs=[
                 Knob(name="payload", label="Injection to smuggle", type="select",

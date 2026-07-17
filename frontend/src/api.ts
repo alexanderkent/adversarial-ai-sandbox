@@ -41,6 +41,7 @@ export interface SweepPoint {
 export interface AttackDescription extends AttackSummary {
   formula: string;
   threat_model: string;
+  flow?: FlowStep[];
   knobs: Knob[];
   has_defense: boolean;
   code?: CodeSnippet[];
@@ -65,6 +66,14 @@ export interface AtlasTechnique {
   tactic: string;
   url: string;
   subtechniques?: AtlasSubtechnique[];
+}
+
+export type FlowActor = "input" | "attacker" | "model" | "defense" | "outcome";
+
+export interface FlowStep {
+  title: string;
+  detail: string;
+  actor: FlowActor;
 }
 
 export interface AtlasAttackRef {

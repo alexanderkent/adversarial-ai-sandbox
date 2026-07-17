@@ -1,7 +1,7 @@
 import torch
 from ..registry import register_attack
 from ..base import AttackModule
-from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec
+from ..schema import Knob, AttackDescription, RunResult, Figure, Metric, SweepSpec, FlowStep
 from ..adapters import mnist
 from ..source import snippet
 from ..atlas import technique
@@ -43,6 +43,13 @@ class BackdoorAttack(AttackModule):
             code=[
                 snippet(mnist.apply_trigger, "Applying the trigger"),
                 snippet(mnist.fine_prune, "Fine-pruning (defense)"),
+            ],
+            flow=[
+                FlowStep(title="Stamp a trigger, relabel to target", detail="A fraction of training images get a small trigger → target class.", actor="attacker"),
+                FlowStep(title="Train — clean accuracy stays high", detail="The backdoor is hard to notice.", actor="model"),
+                FlowStep(title="Clean test image", detail="Classified correctly.", actor="input"),
+                FlowStep(title="Triggered image → target", detail="Any trigger forces the target class (0).", actor="outcome"),
+                FlowStep(title="Fine-pruning", detail="Prune trigger-sensitive channels, then clean fine-tune.", actor="defense"),
             ],
             knobs=[
                 Knob(name="sample_index", label="Digit sample", type="slider",

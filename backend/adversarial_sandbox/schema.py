@@ -145,6 +145,12 @@ class AtlasMatrix(BaseModel):
     tactics: list[AtlasColumn]
 
 
+class FlowStep(BaseModel):
+    title: str
+    detail: str
+    actor: Literal["input", "attacker", "model", "defense", "outcome"]
+
+
 class AttackDescription(BaseModel):
     id: str
     name: str
@@ -152,6 +158,7 @@ class AttackDescription(BaseModel):
     summary: str
     formula: str
     threat_model: str
+    flow: list[FlowStep] = []
     knobs: list[Knob]
     has_defense: bool = True
     sweep: SweepSpec | None = None

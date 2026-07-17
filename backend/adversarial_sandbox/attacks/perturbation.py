@@ -46,7 +46,7 @@ class PerturbationAttack(AttackModule):
                      help="Which held-out test image to perturb (index 0-9 into the "
                           "test set, not the digit value)."),
                 Knob(name="epsilon", label="Epsilon (L-inf budget)", type="slider",
-                     min=0.0, max=0.3, step=0.01, default=0.15,
+                     min=0.0, max=0.3, step=0.01, default=0.25,
                      help="Perturbation size; larger = stronger but more visible."),
                 Knob(name="mode", label="Attack", type="select",
                      options=["fgsm", "pgd"], default="fgsm",

@@ -52,9 +52,11 @@ class BackdoorAttack(AttackModule):
                 FlowStep(title="Fine-pruning", detail="Prune trigger-sensitive channels, then clean fine-tune.", actor="defense"),
             ],
             knobs=[
-                Knob(name="sample_index", label="Digit sample", type="slider",
+                Knob(name="sample_index", label="Test image", type="slider",
                      min=0, max=9, step=1, default=1,
-                     help="Which held-out digit to show (clean vs triggered)."),
+                     help="Which held-out test image to show (index 0-9 into the test "
+                          "set, not the digit value). The actual digit appears in the "
+                          "panels above."),
                 Knob(name="prune_fraction", label="Fine-pruning fraction", type="slider",
                      min=0.0, max=0.9, step=0.05, default=0.7,
                      help="Defense: fraction of channels to prune before a clean fine-tune. "

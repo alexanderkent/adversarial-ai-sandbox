@@ -18,7 +18,7 @@ test("loads attacks and shows the first attack's view", async () => {
   vi.spyOn(api, "listAttacks").mockResolvedValue(attacks);
   vi.spyOn(api, "getAttack").mockResolvedValue(desc);
   render(<App />);
-  expect(screen.getByRole("heading", { name: /adversarial sandbox/i })).toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: /adversarial ai sandbox/i })).toBeInTheDocument();
   await waitFor(() => expect(screen.getByRole("button", { name: "Data Poisoning" })).toBeInTheDocument());
   await waitFor(() => expect(screen.getByRole("heading", { name: "Data Poisoning" })).toBeInTheDocument());
 });

@@ -10,3 +10,6 @@ backend/_data/
 node_modules/
 dist/
 .superpowers/
+
+# Claude Code harness (session-local)
+.claude/

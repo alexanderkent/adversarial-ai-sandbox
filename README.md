@@ -13,7 +13,7 @@ model fail — then flip on the paired defense and watch what it can (and *can't
 ![MIT License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/backend-FastAPI%20%2B%20PyTorch-3776AB)
 ![TypeScript](https://img.shields.io/badge/frontend-React%20%2B%20Vite-3178C6)
-![Attacks](https://img.shields.io/badge/attacks-6-8A2BE2)
+![Attacks](https://img.shields.io/badge/attacks-7-8A2BE2)
 ![MITRE ATLAS](https://img.shields.io/badge/mapped%20to-MITRE%20ATLAS-red)
 
 <img src="docs/img/hero.gif" alt="A tour of the Adversarial AI Sandbox: an FGSM attack flips a digit, a backdoor trade-off curve streams in, a poisoned decision boundary bends, a local LLM gets hijacked into emitting HACKED, and every attack maps to MITRE ATLAS" width="880">
@@ -28,9 +28,11 @@ Adversarial ML is usually taught as slides and equations. This sandbox makes it 
 you can see a one-pixel-budget perturbation flip a digit's label, a poisoned blob bend a
 decision boundary, or a prompt-injection string get past a naive filter — and then try the
 defense yourself. It's built to answer "okay, but does the defense actually work?" — and
-**two of the defenses have deliberate, visible limits**, because in the real world they do too.
+**several defenses have deliberate, visible limits**, because in the real world they do too.
+Spotlighting stops one injection phrasing and not another; a keyword filter misses wording it
+was never trained on. You can trigger those failures yourself, not just read about them.
 
-## The six attacks (each with a paired defense)
+## The seven attacks (each with a paired defense)
 
 | Attack | What you do | Paired defense | MITRE ATLAS |
 |---|---|---|---|
@@ -38,7 +40,8 @@ defense yourself. It's built to answer "okay, but does the defense actually work
 | **Adversarial Perturbation** (FGSM/PGD, MNIST) | Add a tiny L∞ perturbation to fool the classifier | Adversarial training | [AML.T0015](https://atlas.mitre.org/techniques/AML.T0015) · [AML.T0043](https://atlas.mitre.org/techniques/AML.T0043) |
 | **Carlini & Wagner** (targeted L2, MNIST) | Optimize a minimal perturbation to a *chosen* target class | Adversarial training | [AML.T0015](https://atlas.mitre.org/techniques/AML.T0015) · [AML.T0043](https://atlas.mitre.org/techniques/AML.T0043) |
 | **Backdoor** (BadNets trigger, MNIST) | Plant a trigger→target rule at training time | Fine-pruning | [AML.T0018](https://atlas.mitre.org/techniques/AML.T0018) Manipulate AI Model |
-| **Prompt Injection** (local Qwen2.5-1.5B) | Hijack a summarizer directly or via a poisoned RAG doc | Spotlighting / delimiting *(only partial)* | [AML.T0051](https://atlas.mitre.org/techniques/AML.T0051) LLM Prompt Injection |
+| **Prompt Injection** (local Qwen2.5-1.5B) | Hijack a summarizer directly or via a poisoned RAG doc | Spotlighting *or* a trained classifier filter *(both partial)* | [AML.T0051](https://atlas.mitre.org/techniques/AML.T0051) LLM Prompt Injection |
+| **Indirect Data Exfiltration** (local Qwen2.5-1.5B) | Hide an instruction in a retrieved document that leaks a private API key to an attacker URL | Spotlighting *(bypassable)* *or* an output filter that redacts the secret | [AML.T0051](https://atlas.mitre.org/techniques/AML.T0051) · [AML.T0057](https://atlas.mitre.org/techniques/AML.T0057) LLM Data Leakage |
 | **Prompt-Injection Filter Evasion** (TF-IDF) | Slip an injection past a keyword filter — 7 techniques | Input normalization *(can't undo them all)* | [AML.T0015](https://atlas.mitre.org/techniques/AML.T0015) Evade AI Model |
 
 Adding a new attack is **one backend module file with zero frontend changes** — the UI is
@@ -75,11 +78,11 @@ Running locally for development: see [`backend/README.md`](backend/README.md) an
 
 - **Backend:** FastAPI · scikit-learn · PyTorch · 🤗 transformers (a real, key-free local LLM) — `backend/`
 - **Frontend:** React · TypeScript · Vite · Tailwind · KaTeX · highlight.js — `frontend/`
-- **Tests:** 127 backend (pytest) · 65 frontend (vitest)
+- **Tests:** 140 backend (pytest) · 65 frontend (vitest), run in CI on every merge
 
 ## Design & findings
 
-Architecture, per-attack notes, and the empirical findings — including the two
+Architecture, per-attack notes, and the empirical findings — including the
 "defenses have limits" results — are in [`docs/PROJECT_NOTES.md`](docs/PROJECT_NOTES.md).
 
 ## Homage

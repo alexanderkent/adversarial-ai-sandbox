@@ -16,9 +16,9 @@ model fail — then flip on the paired defense and watch what it can (and *can't
 ![Attacks](https://img.shields.io/badge/attacks-6-8A2BE2)
 ![MITRE ATLAS](https://img.shields.io/badge/mapped%20to-MITRE%20ATLAS-red)
 
-<img src="docs/img/hero.gif" alt="Adversarial AI Sandbox — plant a backdoor (100% attack success), then fine-prune the defense and watch it drop to 32%" width="880">
+<img src="docs/img/hero.gif" alt="A tour of the Adversarial AI Sandbox: an FGSM attack flips a digit, a backdoor trade-off curve streams in, a poisoned decision boundary bends, a local LLM gets hijacked into emitting HACKED, and every attack maps to MITRE ATLAS" width="880">
 
-<sub>Plant a BadNets backdoor → 100% attack success → apply the fine-pruning defense → the trigger drops to 32%.</sub>
+<sub>Flip a digit with FGSM → stream the backdoor defense trade-off curve → bend a decision boundary with poisoned data → watch a real local LLM get hijacked → see it all mapped to MITRE ATLAS.</sub>
 
 </div>
 
